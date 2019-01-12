@@ -2,7 +2,13 @@
     "name": "linker-script",
     "displayName": "Linker Script",
     "description": "The extension is developed for linker script, which mainly provides intelligent complement, grammatical cues, and other functions.",
+    "icon": "img/Script.png",
+    "publisher": "amapleaf",
+    "repository": {
+        "url": "https://github.com/amapleaf/linker-script"
+    },
     "version": "0.0.1",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.30.0"
     },
