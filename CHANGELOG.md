@@ -1,7 +1,5 @@
 # Change Log
-All notable changes to the "linker-script" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## v0.1.0
 
-## [Unreleased]
-- Initial release
+- Complete the auto-fill feature for basic keywords.
