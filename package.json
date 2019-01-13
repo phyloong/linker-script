@@ -19,19 +19,12 @@
         "workspaceContains:**/*.lds"
     ],
     "main": "./out/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "extension.sayHello",
-                "title": "Hello World"
-            }
-        ]
-    },
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
+        "package": "node ./node_modules/vsce/out/vsce package",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
