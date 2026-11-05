@@ -9,7 +9,7 @@
 
 - [x] 2.1 Rewrite `README.md` with description, feature list, complete example script, coexistence statement, requirements, and limitations; verify every claim against the built extension by trying it.
 - [x] 2.2 Write the `0.2.0` changelog entry with a leading breaking-change section covering the language id, the removal of plaintext completion, and the minimum editor version; verify it matches the actual package.json diff.
-- [ ] 2.3 Capture screenshots from the released build for completion, hover, and highlighting; verify they show the shipped behavior and current theme.
+- [x] 2.3 Capture screenshots from the released build for completion, hover, and highlighting; verify they show the shipped behavior and current theme (captured from the installed 0.2.0 VSIX, saved under `docs/screenshots/` and embedded in `README.md`).
 
 ## 3. Packaging
 

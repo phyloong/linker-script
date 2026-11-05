@@ -11,6 +11,20 @@ Completion, hover documentation, and syntax highlighting for GNU linker script f
 - **Editor behavior for the language.** `/* */` is the comment syntax, so *Toggle Line Comment* inserts a block comment; brackets and parentheses auto-close; double-clicking keeps `SORT_BY_NAME` and `.text.foo` whole; `/* #region */` and `/* #endregion */` lines are folding markers.
 - **Works on a single file.** Opening `link.lds` with no folder open still activates the extension.
 
+## Screenshots
+
+Syntax highlighting, including `/* */` comments, section and region names, region attributes and `K`/`M`-suffixed numbers:
+
+![Syntax highlighting for a linker script](docs/screenshots/highlighting.png)
+
+Hover documentation: the signature derived from the snippet, a one-sentence summary and a usage example:
+
+![Hover documentation for ALIGN](docs/screenshots/hover.png)
+
+Context-aware completion: inside an output section body the data commands are offered and the block keywords are not:
+
+![Context-aware completion inside an output section body](docs/screenshots/completion.png)
+
 ## Example
 
 Paste this into a file named `link.lds` to see completion, hover, and highlighting in action. Start typing `SEC` at the top of the file, or hover `ALIGN`, `SIZEOF`, `ORIGIN` or `PROVIDE`.

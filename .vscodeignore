@@ -5,6 +5,7 @@ src/**
 dist/test/**
 test/**
 scripts/**
+docs/**
 img/Script.svg
 node_modules/**
 .gitignore
