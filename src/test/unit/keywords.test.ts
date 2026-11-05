@@ -4,7 +4,15 @@
 //
 
 import * as assert from 'assert';
-import { KEYWORDS, KeywordEntry, KeywordScope, keywordsForScope } from '../../keywords/registry';
+import {
+    EXAMPLE_MAX_LENGTH,
+    EXAMPLE_MAX_LINES,
+    KEYWORDS,
+    KeywordEntry,
+    KeywordScope,
+    SUMMARY_MAX_LENGTH,
+    keywordsForScope
+} from '../../keywords/registry';
 
 const ids = KEYWORDS.map((entry) => entry.id);
 const byId = new Map<string, KeywordEntry>(KEYWORDS.map((entry) => [entry.id, entry] as [string, KeywordEntry]));
@@ -83,7 +91,64 @@ suite('Keyword registry', function () {
             for (const scope of item.scopes) {
                 assert.ok(SCOPES.indexOf(scope) !== -1, item.id + ' has a known scope: ' + scope);
             }
-            assert.ok(item.documentation.trim().length > 0, item.id + ' carries documentation');
+            assert.ok(item.summary.trim().length > 0, item.id + ' carries a summary');
+            assert.ok(item.example.trim().length > 0, item.id + ' carries an example');
+        }
+    });
+
+    // The hover content is asserted here, next to the data it constrains, so a
+    // new entry cannot land without the two prose fields.
+    test('every entry has a one-sentence summary within the length cap', function () {
+        for (const item of KEYWORDS) {
+            const summary = item.summary;
+            assert.ok(summary.length <= SUMMARY_MAX_LENGTH,
+                item.id + ' summary is at most ' + SUMMARY_MAX_LENGTH + ' characters');
+            assert.strictEqual(summary.trim(), summary, item.id + ' summary has no outer spaces');
+            assert.strictEqual(summary.slice(-1), '.', item.id + ' summary ends with a full stop');
+            assert.strictEqual(summary.indexOf('. '), -1, item.id + ' summary holds a single sentence');
+        }
+    });
+
+    test('every entry has a short example within the length and line caps', function () {
+        for (const item of KEYWORDS) {
+            assert.ok(item.example.trim().length > 0, item.id + ' has a non-empty example');
+            assert.strictEqual(item.example.trim(), item.example, item.id + ' example has no outer spaces');
+            assert.ok(item.example.length <= EXAMPLE_MAX_LENGTH,
+                item.id + ' example is at most ' + EXAMPLE_MAX_LENGTH + ' characters');
+            assert.ok(item.example.split('\n').length <= EXAMPLE_MAX_LINES,
+                item.id + ' example is at most ' + EXAMPLE_MAX_LINES + ' lines');
+            assert.strictEqual(item.example.indexOf('\t'), -1, item.id + ' example uses spaces, not tabs');
+        }
+    });
+
+    test('every entry is offered by completion in at least one scope', function () {
+        const offered = new Set<string>();
+        for (const scope of SCOPES as KeywordScope[]) {
+            for (const id of labels(scope)) {
+                offered.add(id);
+            }
+        }
+        const missing = ids.filter((id) => !offered.has(id));
+        assert.deepStrictEqual(missing, [], 'hover can only show entries completion also offers');
+    });
+
+    test('multi-scope summaries name every placement in their scope list', function () {
+        const phrases: { [scope in KeywordScope]: string[] } = {
+            top: ['top level'],
+            sections: ['output section'],
+            'section-body': ['section body'],
+            memory: ['memory region'],
+            phdrs: ['program header'],
+            version: ['version'],
+            overlay: ['OVERLAY']
+        };
+        for (const id of ['PROVIDE', 'ASSERT', 'ALIGN']) {
+            const item = entry(id);
+            assert.ok(item.scopes.length > 1, id + ' really lists several scopes');
+            for (const scope of item.scopes) {
+                const named = phrases[scope].some((phrase) => item.summary.indexOf(phrase) !== -1);
+                assert.ok(named, id + ' summary covers its ' + scope + ' placement');
+            }
         }
     });
 

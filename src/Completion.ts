@@ -4,7 +4,7 @@ import { KEYWORDS, KeywordEntry, KeywordKind, keywordsForScope } from './keyword
 import { scanScopes } from './keywords/scanner';
 
 // Category to editor presentation. Kept here so the registry stays free of the
-// vscode module and remains usable from plain-Node tests and, later, hover.
+// vscode module and remains usable from plain-Node tests and hover.
 const COMPLETION_KINDS: { readonly [kind in KeywordKind]: vscode.CompletionItemKind } = {
     block: vscode.CompletionItemKind.Struct,
     command: vscode.CompletionItemKind.Method,
@@ -16,7 +16,8 @@ const COMPLETION_KINDS: { readonly [kind in KeywordKind]: vscode.CompletionItemK
 function renderCompletionItem(entry: KeywordEntry): vscode.CompletionItem {
     const item = new vscode.CompletionItem(entry.id, COMPLETION_KINDS[entry.kind]);
     item.insertText = new vscode.SnippetString(entry.snippet);
-    item.documentation = entry.documentation;
+    // The same summary string hover shows, so the prose exists only once.
+    item.documentation = entry.summary;
     return item;
 }
 
