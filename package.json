@@ -16,8 +16,25 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:**/*.lds"
+        "onLanguage:ld"
     ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "linker-script",
+                "aliases": [
+                    "Linker Script",
+                    "linker-script",
+                    "lds"
+                ],
+                "extensions": [
+                    ".lds",
+                    ".ld"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ]
+    },
     "main": "./dist/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run compile",
