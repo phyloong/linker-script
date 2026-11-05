@@ -1,0 +1,28 @@
+AGENTS.md
+  h_ee8a6db81c66e8 7,21-22,26-29,32
+language-configuration.json
+  h_ee8a6db81c66e8 1-23
+openspec/changes/add-linker-script-language/tasks.md
+  h_ee8a6db81c66e8 5-7,11-13,17-19
+package.json
+  h_ee8a6db81c66e8 19,21-37
+src/extension.ts
+  h_ee8a6db81c66e8 6,8-25,27-30,34
+src/languages.ts
+  h_ee8a6db81c66e8 1-8
+src/test/extension.test.ts
+  h_ee8a6db81c66e8 2-14,18-56,58,60-95,97-108,110
+src/test/unit/language.test.ts
+  h_ee8a6db81c66e8 1-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9307eab60b3d8375be342116b36aeabe0583b637",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
