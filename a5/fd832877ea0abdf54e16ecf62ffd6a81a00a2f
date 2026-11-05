@@ -1,0 +1,16 @@
+.gitignore
+  h_ee8a6db81c66e8 6-10
+AGENTS.md
+  h_ee8a6db81c66e8 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5fd832877ea0abdf54e16ecf62ffd6a81a00a2f",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
