@@ -3,3 +3,8 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+
+# Local agent tooling. Only .agents/ is shared with the repository.
+.claude/
+.codebuddy/
+.opencode/
