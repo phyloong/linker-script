@@ -1,0 +1,14 @@
+openspec/specs/language-support/spec.md
+  h_ee8a6db81c66e8 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "28790ce24e634cf6f7029365183d0ce5c089b8c4",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
