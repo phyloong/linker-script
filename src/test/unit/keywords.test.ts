@@ -1,0 +1,181 @@
+//
+// Pure-Node tests for the keyword registry: coverage, invariants, scope
+// filtering, and the exact snippet strings the spec calls out.
+//
+
+import * as assert from 'assert';
+import { KEYWORDS, KeywordEntry, KeywordScope, keywordsForScope } from '../../keywords/registry';
+
+const ids = KEYWORDS.map((entry) => entry.id);
+const byId = new Map<string, KeywordEntry>(KEYWORDS.map((entry) => [entry.id, entry] as [string, KeywordEntry]));
+
+function entry(id: string): KeywordEntry {
+    const found = byId.get(id);
+    if (found === undefined) {
+        throw new Error('missing registry entry: ' + id);
+    }
+    return found;
+}
+
+function labels(scope: KeywordScope): string[] {
+    return keywordsForScope(scope).map((item) => item.id);
+}
+
+function occurrences(text: string, needle: string): number {
+    return text.split(needle).length - 1;
+}
+
+// The keyword set as it existed before the registry was introduced; every one
+// of these must survive the migration.
+const PREVIOUS_IDS = [
+    'SIZEOF_HEADERS', 'SECTIONS', 'ENTRY', 'INCLUDE', 'INPUT', 'GROUP', 'OUTPUT',
+    'SEARCH_DIR', 'STARTUP', 'OUTPUT_FORMAT', 'TARGET', 'ASSERT', 'EXTERN',
+    'FORCE_COMMON_ALLOCATION', 'NOCROSSREFS', 'OUTPUT_ARCH', 'PROVIDE', 'BYTE',
+    'SHORT', 'LONG', 'QUAD', 'FILL', 'CREATE_OBJECT_SYMBOLS', 'CONSTRUCTORS',
+    'SORT', 'DISCARD', 'NOLOAD', 'DSECT', 'COPY', 'INFO', 'OVERLAY', 'MEMORY',
+    'PHDRS', 'PT_NULL', 'PT_LOAD', 'PT_DYNAMIC', 'PT_INTERP', 'PT_NOTE',
+    'PT_SHLIB', 'PT_PHDR', 'VERSION', 'ABSOLUTE', 'ADDR', 'ALIGN', 'BLOCK',
+    'DEFINED', 'LOADADDR', 'MAX', 'MIN', 'NEXT', 'SIZEOF'
+];
+
+// The nine entries the change adds, plus ORIGIN/LENGTH, which the MEMORY
+// scenario in the spec requires and the old table never had.
+const ADDED_IDS = [
+    'PROVIDE_HIDDEN', 'INSERT', 'REGION_ALIAS', 'LD_FEATURE', 'SORT_BY_NAME',
+    'SORT_BY_ALIGNMENT', 'SORT_BY_INIT_PRIORITY', 'SQUAD', 'KEEP'
+];
+const REGION_FIELD_IDS = ['ORIGIN', 'LENGTH'];
+
+// The optional (attr) list of a MEMORY region: every documented attribute.
+const REGION_ATTRIBUTE_IDS = ['R', 'W', 'X', 'A', 'I', 'L', '!'];
+
+const KINDS = ['block', 'command', 'function', 'field', 'keyword'];
+const SCOPES = ['top', 'sections', 'section-body', 'memory', 'phdrs', 'version', 'overlay'];
+
+suite('Keyword registry', function () {
+
+    test('keeps every keyword that existed before the registry', function () {
+        const missing = PREVIOUS_IDS.filter((id) => !byId.has(id));
+        assert.deepStrictEqual(missing, [], 'no keyword was silently dropped');
+        assert.strictEqual(PREVIOUS_IDS.length, 51);
+    });
+
+    test('adds each missing keyword exactly once', function () {
+        for (const id of ADDED_IDS.concat(REGION_FIELD_IDS, REGION_ATTRIBUTE_IDS)) {
+            assert.strictEqual(ids.filter((candidate) => candidate === id).length, 1, id + ' resolves to exactly one entry');
+        }
+        assert.strictEqual(ids.length, 51 + ADDED_IDS.length + REGION_FIELD_IDS.length + REGION_ATTRIBUTE_IDS.length);
+        assert.strictEqual(KEYWORDS.length, 69);
+    });
+
+    test('has no duplicate ids', function () {
+        assert.strictEqual(new Set(ids).size, ids.length);
+    });
+
+    // Invariant sweep: dropping a field from any entry must fail here.
+    test('every entry has a non-empty snippet, a known kind, and at least one scope', function () {
+        for (const item of KEYWORDS) {
+            assert.ok(item.id.length > 0, 'entry has an id');
+            assert.strictEqual(typeof item.snippet, 'string', item.id + ' has a string snippet');
+            assert.ok(item.snippet.trim().length > 0, item.id + ' has a non-empty snippet');
+            assert.ok(KINDS.indexOf(item.kind) !== -1, item.id + ' has a known kind');
+            assert.ok(item.scopes.length > 0, item.id + ' lists at least one scope');
+            for (const scope of item.scopes) {
+                assert.ok(SCOPES.indexOf(scope) !== -1, item.id + ' has a known scope: ' + scope);
+            }
+            assert.ok(item.documentation.trim().length > 0, item.id + ' carries documentation');
+        }
+    });
+
+    test('top level offers the commands the spec names', function () {
+        const top = labels('top');
+        for (const id of ['ENTRY', 'OUTPUT_FORMAT', 'OUTPUT_ARCH', 'INPUT', 'GROUP',
+            'SEARCH_DIR', 'STARTUP', 'ASSERT', 'EXTERN', 'INCLUDE', 'PROVIDE',
+            'PROVIDE_HIDDEN', 'INSERT']) {
+            assert.ok(top.indexOf(id) !== -1, id + ' is offered at top level');
+        }
+        assert.strictEqual(top.indexOf('BYTE'), -1, 'data commands are not offered at top level');
+    });
+
+    test('an output section body offers data commands and no PROVIDE or ASSERT', function () {
+        const body = labels('section-body');
+        for (const id of ['BYTE', 'SHORT', 'LONG', 'QUAD', 'SQUAD', 'FILL', 'ALIGN']) {
+            assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
+        }
+        assert.strictEqual(body.indexOf('PROVIDE'), -1);
+        assert.strictEqual(body.indexOf('ASSERT'), -1);
+    });
+
+    test('the output section level offers section syntax but no data commands', function () {
+        const sections = labels('sections');
+        for (const id of ['KEEP', 'SORT', 'DISCARD', 'PROVIDE', 'ASSERT']) {
+            assert.ok(sections.indexOf(id) !== -1, id + ' is offered directly inside SECTIONS');
+        }
+        for (const id of ['BYTE', 'SHORT', 'LONG', 'QUAD', 'SQUAD', 'FILL']) {
+            assert.strictEqual(sections.indexOf(id), -1, id + ' is not offered directly inside SECTIONS');
+        }
+    });
+
+    test('MEMORY offers region fields, region attributes and no block keywords', function () {
+        const memory = labels('memory');
+        for (const id of REGION_FIELD_IDS.concat(REGION_ATTRIBUTE_IDS)) {
+            assert.ok(memory.indexOf(id) !== -1, id + ' is offered inside MEMORY');
+        }
+        assert.strictEqual(memory.indexOf('SECTIONS'), -1, 'block keywords are absent inside MEMORY');
+        assert.strictEqual(memory.indexOf('PHDRS'), -1, 'block keywords are absent inside MEMORY');
+        assert.strictEqual(memory.indexOf('BYTE'), -1, 'data commands are absent inside MEMORY');
+
+        // Inside MEMORY a region attribute is an assignment, not a call, so the
+        // inserted text must match the form that is legal there.
+        assert.strictEqual(entry('ORIGIN').snippet, 'ORIGIN = ${1:expression}');
+        assert.strictEqual(entry('LENGTH').snippet, 'LENGTH = ${1:expression}');
+    });
+
+    test('offers INSERT only where it is legal, never inside VERSION', function () {
+        assert.ok(labels('top').indexOf('INSERT') !== -1, 'INSERT is a top-level command');
+        assert.strictEqual(labels('version').indexOf('INSERT'), -1, 'INSERT is not a version-script command');
+    });
+
+    test('VERSION placeholder embeds no newline', function () {
+        assert.strictEqual(entry('VERSION').snippet, 'VERSION {\n\t${1:version-script-commands}\n}');
+        for (const item of KEYWORDS) {
+            const open = item.snippet.indexOf('${');
+            if (open === -1) {
+                continue;
+            }
+            const close = item.snippet.indexOf('}', open);
+            const placeholder = item.snippet.slice(open, close);
+            assert.strictEqual(placeholder.indexOf('\n'), -1, item.id + ' has no newline inside a placeholder');
+        }
+    });
+
+    test('PROVIDE and friends spell expression correctly and take two arguments', function () {
+        assert.strictEqual(entry('PROVIDE').snippet, 'PROVIDE(${1:symbol} = ${2:expression})');
+        assert.strictEqual(entry('PROVIDE_HIDDEN').snippet, 'PROVIDE_HIDDEN(${1:symbol} = ${2:expression})');
+        assert.strictEqual(entry('ASSERT').snippet, 'ASSERT(${1:expression}, ${2:message})');
+        for (const id of ['ASSERT', 'PROVIDE', 'PROVIDE_HIDDEN', 'MIN', 'MAX']) {
+            const snippet = entry(id).snippet;
+            assert.strictEqual(occurrences(snippet, '${1'), 1, id + ' has a first tab stop');
+            assert.strictEqual(occurrences(snippet, '${2'), 1, id + ' has a second tab stop');
+            assert.strictEqual(occurrences(snippet, 'experssion'), 0, id + ' is spelled correctly');
+        }
+    });
+
+    test('GROUP and INPUT show two file placeholders separated by a space', function () {
+        assert.strictEqual(entry('GROUP').snippet, 'GROUP(${1:lib.a} ${2:lib2.a})');
+        assert.strictEqual(entry('INPUT').snippet, 'INPUT(${1:file.o} ${2:file2.o})');
+        for (const id of ['GROUP', 'INPUT']) {
+            const snippet = entry(id).snippet;
+            assert.strictEqual(occurrences(snippet, '${1:'), 1, id + ' has a first file placeholder');
+            assert.strictEqual(occurrences(snippet, '${2:'), 1, id + ' shows how to add a second file');
+            assert.ok(snippet.indexOf('} ${2:') !== -1, id + ' separates the files with a space');
+        }
+    });
+
+    test('SORT offers the pattern form and DISCARD inserts a section description', function () {
+        assert.strictEqual(entry('SORT').snippet, 'SORT(${1:.text*})');
+        assert.strictEqual(entry('SORT_BY_NAME').snippet, 'SORT_BY_NAME(${1:.text*})');
+        assert.strictEqual(entry('DISCARD').snippet, '/DISCARD/ : { *(${1:.comment}) }');
+        assert.notStrictEqual(entry('DISCARD').snippet, '/DISCARD/');
+    });
+});
