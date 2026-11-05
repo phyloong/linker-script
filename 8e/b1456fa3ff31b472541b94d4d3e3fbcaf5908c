@@ -1,0 +1,170 @@
+.agents/skills/.openspec-target
+  h_ee8a6db81c66e8 1
+.agents/skills/openspec-apply-change/SKILL.md
+  h_ee8a6db81c66e8 1-206
+.agents/skills/openspec-archive-change/SKILL.md
+  h_ee8a6db81c66e8 1-221
+.agents/skills/openspec-explore/SKILL.md
+  h_ee8a6db81c66e8 1-356
+.agents/skills/openspec-propose/SKILL.md
+  h_ee8a6db81c66e8 1-175
+.agents/skills/openspec-sync-specs/SKILL.md
+  h_ee8a6db81c66e8 1-290
+.agents/skills/openspec-update-change/SKILL.md
+  h_ee8a6db81c66e8 1-109
+.claude/commands/opsx/apply.md
+  h_ee8a6db81c66e8 1-202
+.claude/commands/opsx/archive.md
+  h_ee8a6db81c66e8 1-264
+.claude/commands/opsx/explore.md
+  h_ee8a6db81c66e8 1-241
+.claude/commands/opsx/propose.md
+  h_ee8a6db81c66e8 1-171
+.claude/commands/opsx/sync.md
+  h_ee8a6db81c66e8 1-286
+.claude/commands/opsx/update.md
+  h_ee8a6db81c66e8 1-105
+.claude/skills/openspec-apply-change/SKILL.md
+  h_ee8a6db81c66e8 1-206
+.claude/skills/openspec-archive-change/SKILL.md
+  h_ee8a6db81c66e8 1-221
+.claude/skills/openspec-explore/SKILL.md
+  h_ee8a6db81c66e8 1-356
+.claude/skills/openspec-propose/SKILL.md
+  h_ee8a6db81c66e8 1-175
+.claude/skills/openspec-sync-specs/SKILL.md
+  h_ee8a6db81c66e8 1-290
+.claude/skills/openspec-update-change/SKILL.md
+  h_ee8a6db81c66e8 1-109
+.codebuddy/commands/opsx/apply.md
+  h_ee8a6db81c66e8 1-200
+.codebuddy/commands/opsx/archive.md
+  h_ee8a6db81c66e8 1-262
+.codebuddy/commands/opsx/explore.md
+  h_ee8a6db81c66e8 1-239
+.codebuddy/commands/opsx/propose.md
+  h_ee8a6db81c66e8 1-169
+.codebuddy/commands/opsx/sync.md
+  h_ee8a6db81c66e8 1-284
+.codebuddy/commands/opsx/update.md
+  h_ee8a6db81c66e8 1-103
+.codebuddy/skills/openspec-apply-change/SKILL.md
+  h_ee8a6db81c66e8 1-206
+.codebuddy/skills/openspec-archive-change/SKILL.md
+  h_ee8a6db81c66e8 1-221
+.codebuddy/skills/openspec-explore/SKILL.md
+  h_ee8a6db81c66e8 1-356
+.codebuddy/skills/openspec-propose/SKILL.md
+  h_ee8a6db81c66e8 1-175
+.codebuddy/skills/openspec-sync-specs/SKILL.md
+  h_ee8a6db81c66e8 1-290
+.codebuddy/skills/openspec-update-change/SKILL.md
+  h_ee8a6db81c66e8 1-109
+.opencode/commands/opsx-apply.md
+  h_ee8a6db81c66e8 1-199
+.opencode/commands/opsx-archive.md
+  h_ee8a6db81c66e8 1-261
+.opencode/commands/opsx-explore.md
+  h_ee8a6db81c66e8 1-238
+.opencode/commands/opsx-propose.md
+  h_ee8a6db81c66e8 1-168
+.opencode/commands/opsx-sync.md
+  h_ee8a6db81c66e8 1-283
+.opencode/commands/opsx-update.md
+  h_ee8a6db81c66e8 1-102
+.opencode/skills/openspec-apply-change/SKILL.md
+  h_ee8a6db81c66e8 1-206
+.opencode/skills/openspec-archive-change/SKILL.md
+  h_ee8a6db81c66e8 1-221
+.opencode/skills/openspec-explore/SKILL.md
+  h_ee8a6db81c66e8 1-356
+.opencode/skills/openspec-propose/SKILL.md
+  h_ee8a6db81c66e8 1-175
+.opencode/skills/openspec-sync-specs/SKILL.md
+  h_ee8a6db81c66e8 1-290
+.opencode/skills/openspec-update-change/SKILL.md
+  h_ee8a6db81c66e8 1-109
+AGENTS.md
+  h_ee8a6db81c66e8 1-30
+openspec/changes/add-keyword-hover/.openspec.yaml
+  h_ee8a6db81c66e8 1-4
+openspec/changes/add-keyword-hover/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/add-keyword-hover/design.md
+  h_ee8a6db81c66e8 1-51
+openspec/changes/add-keyword-hover/proposal.md
+  h_ee8a6db81c66e8 1-30
+openspec/changes/add-keyword-hover/specs/keyword-documentation/spec.md
+  h_ee8a6db81c66e8 1-58
+openspec/changes/add-keyword-hover/tasks.md
+  h_ee8a6db81c66e8 1-19
+openspec/changes/add-linker-script-language/.openspec.yaml
+  h_ee8a6db81c66e8 1-4
+openspec/changes/add-linker-script-language/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/add-linker-script-language/design.md
+  h_ee8a6db81c66e8 1-59
+openspec/changes/add-linker-script-language/proposal.md
+  h_ee8a6db81c66e8 1-30
+openspec/changes/add-linker-script-language/specs/language-support/spec.md
+  h_ee8a6db81c66e8 1-58
+openspec/changes/add-linker-script-language/tasks.md
+  h_ee8a6db81c66e8 1-19
+openspec/changes/add-syntax-highlighting/.openspec.yaml
+  h_ee8a6db81c66e8 1-4
+openspec/changes/add-syntax-highlighting/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/add-syntax-highlighting/design.md
+  h_ee8a6db81c66e8 1-56
+openspec/changes/add-syntax-highlighting/proposal.md
+  h_ee8a6db81c66e8 1-28
+openspec/changes/add-syntax-highlighting/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 1-82
+openspec/changes/add-syntax-highlighting/tasks.md
+  h_ee8a6db81c66e8 1-26
+openspec/changes/improve-keyword-completion/.openspec.yaml
+  h_ee8a6db81c66e8 1-4
+openspec/changes/improve-keyword-completion/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/improve-keyword-completion/design.md
+  h_ee8a6db81c66e8 1-60
+openspec/changes/improve-keyword-completion/proposal.md
+  h_ee8a6db81c66e8 1-32
+openspec/changes/improve-keyword-completion/specs/keyword-completion/spec.md
+  h_ee8a6db81c66e8 1-92
+openspec/changes/improve-keyword-completion/tasks.md
+  h_ee8a6db81c66e8 1-26
+openspec/changes/migrate-extension-toolchain/.openspec.yaml
+  h_ee8a6db81c66e8 1-5
+openspec/changes/migrate-extension-toolchain/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/migrate-extension-toolchain/design.md
+  h_ee8a6db81c66e8 1-77
+openspec/changes/migrate-extension-toolchain/proposal.md
+  h_ee8a6db81c66e8 1-37
+openspec/changes/migrate-extension-toolchain/tasks.md
+  h_ee8a6db81c66e8 1-27
+openspec/changes/prepare-0-2-0-release/.openspec.yaml
+  h_ee8a6db81c66e8 1-5
+openspec/changes/prepare-0-2-0-release/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/prepare-0-2-0-release/design.md
+  h_ee8a6db81c66e8 1-60
+openspec/changes/prepare-0-2-0-release/proposal.md
+  h_ee8a6db81c66e8 1-33
+openspec/changes/prepare-0-2-0-release/tasks.md
+  h_ee8a6db81c66e8 1-23
+openspec/config.yaml
+  h_ee8a6db81c66e8 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8eb1456fa3ff31b472541b94d4d3e3fbcaf5908c",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
