@@ -1,0 +1,30 @@
+.github/workflows/ci.yml
+  h_ee8a6db81c66e8 1-61
+.github/workflows/release.yml
+  h_ee8a6db81c66e8 1-121
+.vscodeignore
+  h_ee8a6db81c66e8 8,11-13,18,21
+AGENTS.md
+  h_ee8a6db81c66e8 7,22-23,28,40
+CHANGELOG.md
+  h_ee8a6db81c66e8 3-24
+README.md
+  h_ee8a6db81c66e8 3,7-12,14-57,59-81,83
+openspec/changes/prepare-0-2-0-release/tasks.md
+  h_ee8a6db81c66e8 5-6,10-11,16-17,21-23
+package-lock.json
+  h_ee8a6db81c66e8 3,9
+package.json
+  h_ee8a6db81c66e8 4,8,10,16-31,60-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35edac8c8fa13aa6e92ad9a8421a9e184b91eb37",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
