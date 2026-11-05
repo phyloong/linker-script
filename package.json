@@ -33,6 +33,13 @@
                 ],
                 "configuration": "./language-configuration.json"
             }
+        ],
+        "grammars": [
+            {
+                "language": "linker-script",
+                "scopeName": "source.linker-script",
+                "path": "./syntaxes/linker-script.tmLanguage.json"
+            }
         ]
     },
     "main": "./dist/extension.js",
@@ -43,8 +50,9 @@
         "compile": "npm run typecheck && npm run bundle",
         "watch": "npm run typecheck && node esbuild.js --watch",
         "lint": "eslint src",
-        "test": "npm run compile && npm run test:unit && npm run test:extension",
+        "test": "npm run compile && npm run test:unit && npm run test:grammar && npm run test:extension",
         "test:unit": "mocha --ui tdd \"dist/test/unit/**/*.test.js\"",
+        "test:grammar": "vscode-tmgrammar-test \"test/grammar/**/*.ld\" && node scripts/check-grammar-fixtures.mjs",
         "test:extension": "vscode-test",
         "package": "vsce package"
     },
@@ -59,6 +67,7 @@
         "eslint": "^10.14.0",
         "mocha": "^12.0.3",
         "typescript": "~5.9.3",
-        "typescript-eslint": "^8.72.1"
+        "typescript-eslint": "^8.72.1",
+        "vscode-tmgrammar-test": "^0.1.3"
     }
 }

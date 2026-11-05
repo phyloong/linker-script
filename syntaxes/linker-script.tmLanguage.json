@@ -1,0 +1,663 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Linker Script",
+    "scopeName": "source.linker-script",
+    "fileTypes": [
+        "lds",
+        "ld"
+    ],
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#numbers"
+        },
+        {
+            "include": "#blocks"
+        },
+        {
+            "include": "#section-items"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "comment": "Linker scripts have one comment form. It does not nest, so an unterminated comment runs to the end of the file.",
+            "patterns": [
+                {
+                    "name": "comment.block.ld",
+                    "begin": "/\\*",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.ld"
+                        }
+                    },
+                    "end": "\\*/",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.ld"
+                        }
+                    }
+                }
+            ]
+        },
+        "escape": {
+            "match": "\\\\.",
+            "name": "constant.character.escape.ld"
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.ld",
+                    "begin": "\"",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.begin.ld"
+                        }
+                    },
+                    "end": "\"",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.ld"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escape"
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.ld",
+                    "begin": "'",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.begin.ld"
+                        }
+                    },
+                    "end": "'",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.ld"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escape"
+                        }
+                    ]
+                }
+            ]
+        },
+        "numbers": {
+            "comment": "Decimal, hexadecimal (0x), octal (leading 0) and a K or M suffix, suffix inside the match; a number glued to a hyphenated word such as x86-64 is left alone.",
+            "patterns": [
+                {
+                    "match": "(?<![\\w.])-\\d+[KkMm]?\\b",
+                    "name": "constant.numeric.ld"
+                },
+                {
+                    "match": "(?<![\\w.-])(?:0[xX][0-9a-fA-F]+|\\d+[KkMm]?)\\b",
+                    "name": "constant.numeric.ld"
+                }
+            ]
+        },
+        "blocks": {
+            "comment": "One repository entry per top-level block. The opening brace is optional so a brace on the next line still belongs to the block. The trailing arm only catches OVERLAY outside SECTIONS; the four other block entries always match their keyword first.",
+            "patterns": [
+                {
+                    "include": "#block-sections"
+                },
+                {
+                    "include": "#block-memory"
+                },
+                {
+                    "include": "#block-phdrs"
+                },
+                {
+                    "include": "#block-version"
+                },
+                {
+                    "match": "\\bOVERLAY\\b",
+                    "name": "keyword.control.block.ld"
+                }
+            ]
+        },
+        "block-sections": {
+            "begin": "\\b(SECTIONS)\\b\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.block.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#sections-body"
+                }
+            ]
+        },
+        "block-memory": {
+            "begin": "\\b(MEMORY)\\b\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.block.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#memory-body"
+                }
+            ]
+        },
+        "block-phdrs": {
+            "begin": "\\b(PHDRS)\\b\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.block.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#phdrs-body"
+                }
+            ]
+        },
+        "block-version": {
+            "begin": "\\b(VERSION)\\b\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.block.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#version-body"
+                }
+            ]
+        },
+        "sections-body": {
+            "comment": "SECTIONS content: output sections, and the statements legal between them.",
+            "patterns": [
+                {
+                    "include": "#overlay"
+                },
+                {
+                    "include": "#section-header"
+                },
+                {
+                    "include": "#section-items"
+                }
+            ]
+        },
+        "section-header": {
+            "comment": "Output section: name, optional (type), colon, and the braced body that follows.",
+            "begin": "(?<![\\w.$])([./][\\w.$/~+-]+)\\s*(?:(\\()\\s*([A-Za-z_][\\w.-]*)\\s*(\\))\\s*)?(:)\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "entity.name.section.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.parens.begin.ld"
+                },
+                "3": {
+                    "name": "keyword.other.ld"
+                },
+                "4": {
+                    "name": "punctuation.section.parens.end.ld"
+                },
+                "5": {
+                    "name": "punctuation.separator.colon.ld"
+                },
+                "6": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#section-items"
+                }
+            ]
+        },
+        "overlay": {
+            "comment": "OVERLAY address : [AT(load)] { sections } — only legal inside SECTIONS.",
+            "begin": "\\b(OVERLAY)\\b",
+            "beginCaptures": {
+                "0": {
+                    "name": "keyword.control.block.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#overlay-section"
+                },
+                {
+                    "include": "#sections-body"
+                }
+            ]
+        },
+        "overlay-section": {
+            "comment": "An overlay section: a name and a braced body, with no colon.",
+            "begin": "(?<![\\w.$])([./][\\w.$/~+-]+)\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "entity.name.section.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#section-items"
+                }
+            ]
+        },
+        "section-items": {
+            "comment": "Everything allowed in SECTIONS, in an output section body, and inside an input section group.",
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#strings"
+                },
+                {
+                    "include": "#numbers"
+                },
+                {
+                    "include": "#statements"
+                },
+                {
+                    "include": "#location-counter"
+                },
+                {
+                    "include": "#paren-group"
+                },
+                {
+                    "include": "#input-section-name"
+                },
+                {
+                    "include": "#region-markers"
+                },
+                {
+                    "include": "#operators"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        },
+        "paren-group": {
+            "comment": "A parenthesised argument list or input section group; groups nest.",
+            "begin": "\\(",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.section.parens.begin.ld"
+                }
+            },
+            "end": "\\)",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.parens.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#section-items"
+                }
+            ]
+        },
+        "input-section-name": {
+            "comment": "Input section name or pattern: .text, .text*, .rodata.*, *crtend.o, COMMON.",
+            "match": "(?<![\\w.$])(?:\\.[A-Za-z_$][\\w.$-]*\\*?|\\*[\\w.$-]+|COMMON\\b)",
+            "name": "entity.name.section.input.ld"
+        },
+        "location-counter": {
+            "match": "(?<![\\w.$])\\.(?![.\\w$])",
+            "name": "variable.other.location-counter.ld"
+        },
+        "statements": {
+            "patterns": [
+                {
+                    "include": "#commands"
+                },
+                {
+                    "include": "#expressions"
+                },
+                {
+                    "include": "#symbols"
+                }
+            ]
+        },
+        "commands": {
+            "patterns": [
+                {
+                    "match": "\\b(?:ENTRY|OUTPUT_FORMAT|OUTPUT_ARCH|OUTPUT|INPUT|GROUP|SEARCH_DIR|STARTUP|TARGET|ASSERT|EXTERN|INCLUDE|PROVIDE_HIDDEN|PROVIDE|INSERT|NOCROSSREFS|LD_FEATURE|REGION_ALIAS|KEEP|SORT_BY_INIT_PRIORITY|SORT_BY_ALIGNMENT|SORT_BY_NAME|SORT|BYTE|SHORT|LONG|QUAD|SQUAD|FILL)\\b",
+                    "name": "keyword.control.command.ld"
+                },
+                {
+                    "match": "\\b(?:FORCE_COMMON_ALLOCATION|NOLOAD|DSECT|COPY|INFO|CREATE_OBJECT_SYMBOLS|CONSTRUCTORS)\\b",
+                    "name": "keyword.other.ld"
+                }
+            ]
+        },
+        "expressions": {
+            "match": "\\b(?:SIZEOF_HEADERS|SIZEOF|ALIGN|ABSOLUTE|ADDR|BLOCK|DEFINED|LOADADDR|MAX|MIN|NEXT)\\b",
+            "name": "support.function.ld"
+        },
+        "symbols": {
+            "comment": "Assignment target: the symbol being defined on the left of '='.",
+            "match": "(?<![\\w.$])[A-Za-z_][\\w.$]*(?=\\s*=)",
+            "name": "variable.other.symbol.ld"
+        },
+        "region-markers": {
+            "patterns": [
+                {
+                    "match": "\\b(AT)\\s*(>)\\s*([A-Za-z_][\\w.-]*)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.region-marker.ld"
+                        },
+                        "2": {
+                            "name": "keyword.operator.region-marker.ld"
+                        },
+                        "3": {
+                            "name": "entity.name.tag.region.ld"
+                        }
+                    }
+                },
+                {
+                    "match": "(>)\\s*([A-Za-z_][\\w.-]*)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.region-marker.ld"
+                        },
+                        "2": {
+                            "name": "entity.name.tag.region.ld"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(AT)\\b(?=\\s*\\()",
+                    "name": "keyword.operator.region-marker.ld"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "match": "!=",
+                    "name": "keyword.operator.comparison.ld"
+                },
+                {
+                    "match": "!",
+                    "name": "keyword.operator.exclusion.ld"
+                },
+                {
+                    "match": "\\*",
+                    "name": "keyword.operator.wildcard.ld"
+                },
+                {
+                    "match": "=",
+                    "name": "keyword.operator.assignment.ld"
+                },
+                {
+                    "match": ">=|<=",
+                    "name": "keyword.operator.comparison.ld"
+                },
+                {
+                    "match": "(?<=\\s)[+-](?=\\s)",
+                    "name": "keyword.operator.ld"
+                },
+                {
+                    "match": "[<>&|~]",
+                    "name": "keyword.operator.ld"
+                }
+            ]
+        },
+        "punctuation": {
+            "patterns": [
+                {
+                    "match": ";",
+                    "name": "punctuation.terminator.statement.ld"
+                },
+                {
+                    "match": ",",
+                    "name": "punctuation.separator.comma.ld"
+                },
+                {
+                    "match": ":",
+                    "name": "punctuation.separator.colon.ld"
+                },
+                {
+                    "match": "\\{",
+                    "name": "punctuation.section.block.begin.ld"
+                },
+                {
+                    "match": "\\}",
+                    "name": "punctuation.section.block.end.ld"
+                },
+                {
+                    "match": "\\)",
+                    "name": "punctuation.section.parens.end.ld"
+                }
+            ]
+        },
+        "memory-body": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#strings"
+                },
+                {
+                    "match": "\\b(?i:ORIGIN|org|o|LENGTH|len|l)\\b(?=\\s*=)",
+                    "name": "keyword.other.region-field.ld"
+                },
+                {
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$-]*(?=\\s*(?:\\(|:))",
+                    "name": "entity.name.tag.region.ld"
+                },
+                {
+                    "include": "#region-attributes"
+                },
+                {
+                    "include": "#numbers"
+                },
+                {
+                    "include": "#operators"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        },
+        "region-attributes": {
+            "comment": "The optional (attr) list of a memory region, e.g. (rwx) or (!rx).",
+            "name": "meta.attributes.region.ld",
+            "begin": "\\(",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.section.parens.begin.ld"
+                }
+            },
+            "end": "\\)",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.parens.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "match": "!",
+                    "name": "keyword.operator.exclusion.ld"
+                },
+                {
+                    "match": "[A-Za-z]+",
+                    "name": "keyword.other.region-attribute.ld"
+                },
+                {
+                    "include": "#comments"
+                }
+            ]
+        },
+        "phdrs-body": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#strings"
+                },
+                {
+                    "match": "\\bPT_[A-Z_]+\\b",
+                    "name": "support.type.program-header.ld"
+                },
+                {
+                    "match": "\\b(?:FILEHDR|PHDRS)\\b",
+                    "name": "keyword.other.phdr-flag.ld"
+                },
+                {
+                    "match": "\\b(?:AT|FLAGS)\\b",
+                    "name": "keyword.control.command.ld"
+                },
+                {
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$-]*(?=\\s+(?:PT_|FILEHDR|PHDRS|AT|FLAGS))",
+                    "name": "entity.name.tag.phdr.ld"
+                },
+                {
+                    "include": "#numbers"
+                },
+                {
+                    "include": "#location-counter"
+                },
+                {
+                    "include": "#paren-group"
+                },
+                {
+                    "include": "#operators"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        },
+        "version-body": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#version-node"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        },
+        "version-node": {
+            "begin": "([A-Za-z_][\\w.$-]*)\\s*(\\{)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "entity.name.tag.version.ld"
+                },
+                "2": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#version-node-body"
+                }
+            ]
+        },
+        "version-node-body": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#strings"
+                },
+                {
+                    "match": "\\b(?:global|local)\\b",
+                    "name": "keyword.other.version.ld"
+                },
+                {
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$]*",
+                    "name": "entity.name.symbol.ld"
+                },
+                {
+                    "include": "#operators"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        }
+    }
+}
