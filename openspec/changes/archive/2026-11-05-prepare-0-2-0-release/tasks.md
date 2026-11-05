@@ -19,5 +19,5 @@
 ## 4. Release automation
 
 - [x] 4.1 Add a CI workflow that runs type check, bundle, unit tests, extension-host tests, and `vsce package` on every push; verify it passes on a branch (first run on `master` at `9803df5` succeeded in 76 s, job "Verify and package").
-- [x] 4.2 Add the tag-triggered publish job using trusted publishing, with a documented token fallback; verify the dry-run path reports the artifact it would publish.
+- [x] 4.2 Add the tag-triggered publish job using trusted publishing, with a documented token fallback; verify the dry-run path reports the artifact it would publish (trusted publishing was exercised on 2026-11-05 with a manual dispatch: the OIDC token exchange succeeded and `vsce` then stopped at `amapleaf.linker-script v0.2.0 already exists`, so the publisher policy matches without anything being published).
 - [x] 4.3 Dry-run the release on a throwaway pre-release version, then restore `0.2.0`; verify the published listing renders correctly (0.2.0 is live and the listing shows the new description, feature list and screenshots; it was published from the web UI because the tagged CI run failed at the OIDC exchange with 401 — the publisher has no federated credential yet).
