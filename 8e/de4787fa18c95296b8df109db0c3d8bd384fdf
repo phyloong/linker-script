@@ -1,0 +1,14 @@
+openspec/changes/archive/2026-11-05-prepare-0-2-0-release/tasks.md
+  h_ee8a6db81c66e8 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8ede4787fa18c95296b8df109db0c3d8bd384fdf",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
