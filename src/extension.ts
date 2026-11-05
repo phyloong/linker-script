@@ -7,7 +7,7 @@ import { CompletionProvider } from './Completion';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.languages.registerCompletionItemProvider('plaintext', new CompletionProvider);
+    const disposable = vscode.languages.registerCompletionItemProvider('plaintext', new CompletionProvider);
 
     context.subscriptions.push(disposable);
 }

@@ -10,7 +10,7 @@
     "version": "0.1.0",
     "license": "Apache-2.0",
     "engines": {
-        "vscode": "^1.30.0"
+        "vscode": "^1.74.0"
     },
     "categories": [
         "Other"
@@ -18,21 +18,30 @@
     "activationEvents": [
         "workspaceContains:**/*.lds"
     ],
-    "main": "./out/extension",
+    "main": "./dist/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "package": "node ./node_modules/vsce/out/vsce package",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "typecheck": "tsc --noEmit",
+        "bundle": "node esbuild.js",
+        "compile": "npm run typecheck && npm run bundle",
+        "watch": "npm run typecheck && node esbuild.js --watch",
+        "lint": "eslint src",
+        "test": "npm run compile && npm run test:unit && npm run test:extension",
+        "test:unit": "mocha --ui tdd \"dist/test/unit/**/*.test.js\"",
+        "test:extension": "vscode-test",
+        "package": "vsce package"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.25",
-        "tslint": "^5.8.0",
-        "typescript": "^3.1.4",
-        "vsce": "^1.54.0",
-        "vscode": "^1.1.25"
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^16.18.126",
+        "@types/vscode": "~1.74.0",
+        "@vscode/test-cli": "^0.0.15",
+        "@vscode/test-electron": "^3.1.0",
+        "@vscode/vsce": "^4.1.0",
+        "esbuild": "^0.28.2",
+        "eslint": "^10.14.0",
+        "mocha": "^12.0.3",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "^8.72.1"
     }
 }
