@@ -1,0 +1,14 @@
+openspec/specs/keyword-completion/spec.md
+  h_ee8a6db81c66e8 1-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed439a2852c6131b2df94a767e1021458327dd52",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
