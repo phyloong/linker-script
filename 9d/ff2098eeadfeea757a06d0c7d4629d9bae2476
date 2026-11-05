@@ -1,0 +1,28 @@
+AGENTS.md
+  h_ee8a6db81c66e8 7,30-32,34
+openspec/changes/improve-keyword-completion/tasks.md
+  h_ee8a6db81c66e8 5-8,12-15,19-21,25-26
+src/Completion.ts
+  h_ee8a6db81c66e8 3-21,25-36
+src/keywords/registry.ts
+  h_ee8a6db81c66e8 1-553
+src/keywords/scanner.ts
+  h_ee8a6db81c66e8 1-181
+src/test/extension.test.ts
+  h_ee8a6db81c66e8 14-15,25,41-46,57-63,67,69-77,132-240
+src/test/unit/keywords.test.ts
+  h_ee8a6db81c66e8 1-181
+src/test/unit/scanner.test.ts
+  h_ee8a6db81c66e8 1-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9dff2098eeadfeea757a06d0c7d4629d9bae2476",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
