@@ -1,11 +1,13 @@
 name: Release
 
-# Publishing runs only for a version tag. The job re-runs the verification chain
-# and publishes the artifact it just tested, so a broken package cannot ship.
+# Publishing runs on a version tag, or on demand from the Actions tab. Either
+# way the job re-runs the verification chain and publishes the artifact it just
+# tested, so a broken package cannot ship.
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -88,7 +90,17 @@ jobs:
       - name: Check that the tag matches package.json
         run: |
           version="$(node -p "require('./package.json').version")"
-          test "v$version" = "$GITHUB_REF_NAME"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            # A tag push, or a manual run started from the tag: the tag is the
+            # release identity, so it must name exactly this version.
+            test "v$version" = "$GITHUB_REF_NAME"
+            echo "Tag $GITHUB_REF_NAME matches package.json $version."
+          else
+            # A manual run from a branch has no tag to compare against; the
+            # package version is the release identity and the Marketplace
+            # rejects a version that already exists.
+            echo "Manual run from $GITHUB_REF_NAME: publishing package.json version $version."
+          fi
 
       - name: Report the artifact that would be published
         run: |
