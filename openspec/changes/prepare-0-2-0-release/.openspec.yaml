@@ -1,0 +1,5 @@
+schema: spec-driven
+skip_specs: true
+created: 2026-11-05
+goal: README, CHANGELOG, version bump, packaged artifact verification, and
+  publish workflow.

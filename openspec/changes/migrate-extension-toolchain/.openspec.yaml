@@ -1,0 +1,5 @@
+schema: spec-driven
+skip_specs: true
+created: 2026-11-05
+goal: "0.2.0 foundations: esbuild bundling, @vscode/vsce 4, @vscode/test-cli,
+  ESLint flat config, TypeScript 7."

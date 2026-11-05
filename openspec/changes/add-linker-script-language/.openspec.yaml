@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-05
+goal: Language contribution, language configuration, activation, and
+  compatibility provider registration for the ld language id.

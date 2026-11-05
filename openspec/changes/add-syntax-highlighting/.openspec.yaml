@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-05
+goal: G2 grammar for commands, sections, MEMORY, PHDRS, VERSION, OVERLAY, and
+  exclusion syntax.

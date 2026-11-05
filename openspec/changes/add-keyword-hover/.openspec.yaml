@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-05
+goal: Hover provider rendering signature, summary, and example from the keyword
+  registry.
