@@ -1,0 +1,61 @@
+name: CI
+
+# Runs the same chain a maintainer runs before a release: type check, bundle,
+# unit tests, grammar fixtures, extension-host tests, then the packaged VSIX.
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify and package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          # The developer tooling (vsce, vscode-test, eslint) needs Node >= 22.13.
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Bundle
+        run: npm run bundle
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Grammar tests
+        run: npm run test:grammar
+
+      - name: Extension-host tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          xvfb-run -a npm run test:extension
+
+      - name: Package
+        run: npx vsce package --out linker-script.vsix
+
+      - name: Inspect the package
+        run: npx vsce ls
+
+      - name: Upload the package
+        uses: actions/upload-artifact@v7
+        with:
+          name: vsix
+          path: linker-script.vsix
+          if-no-files-found: error

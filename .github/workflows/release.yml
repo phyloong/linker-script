@@ -1,0 +1,121 @@
+name: Release
+
+# Publishing runs only for a version tag. The job re-runs the verification chain
+# and publishes the artifact it just tested, so a broken package cannot ship.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify and package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Bundle
+        run: npm run bundle
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Grammar tests
+        run: npm run test:grammar
+
+      - name: Extension-host tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          xvfb-run -a npm run test:extension
+
+      - name: Package
+        run: npx vsce package --out linker-script.vsix
+
+      - name: Inspect the package
+        run: npx vsce ls
+
+      - name: Upload the package
+        uses: actions/upload-artifact@v7
+        with:
+          name: vsix
+          path: linker-script.vsix
+          if-no-files-found: error
+
+  publish:
+    name: Publish to the Marketplace
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required for trusted publishing: vsce exchanges this job's OIDC token
+      # with the Marketplace, so no long-lived token is stored in the repository.
+      id-token: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download the tested package
+        uses: actions/download-artifact@v8
+        with:
+          name: vsix
+
+      - name: Check that the tag matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          test "v$version" = "$GITHUB_REF_NAME"
+
+      - name: Report the artifact that would be published
+        run: |
+          ls -l ./*.vsix
+          sha256sum ./*.vsix
+          # Inspect the downloaded package itself. `vsce ls` reads the source
+          # tree, which here has no dist/ because dist/ is not committed.
+          unzip -l ./*.vsix
+
+      - name: Publish
+        env:
+          # Fallback only. When this secret is empty the step publishes with
+          # trusted publishing (OIDC) and no token is read.
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          # Preferred path: trusted publishing through the GitHub OIDC token.
+          # The publisher must list this repository as a federated credential in
+          # the Marketplace; the id-token permission above makes the token available.
+          #
+          # Fallback path: if trusted publishing is unavailable for the publisher,
+          # create a Marketplace personal access token with the "Manage" scope and
+          # store it as the repository secret VSCE_PAT. The secret is optional and
+          # is never required by the default workflow.
+          if [ -n "${VSCE_PAT}" ]; then
+            echo "VSCE_PAT is set: publishing with the scoped token fallback."
+            npx vsce publish --packagePath ./*.vsix -p "${VSCE_PAT}"
+          else
+            echo "No VSCE_PAT: publishing with GitHub Actions OIDC trusted publishing."
+            npx vsce publish --packagePath ./*.vsix --oidc
+          fi

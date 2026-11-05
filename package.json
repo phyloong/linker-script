@@ -1,19 +1,34 @@
 {
     "name": "linker-script",
     "displayName": "Linker Script",
-    "description": "The extension is developed for linker script, which mainly provides intelligent complement, grammatical cues, and other functions.",
+    "description": "Completion, hover documentation, and syntax highlighting for GNU linker script files (.lds and .ld).",
     "icon": "img/Script.png",
     "publisher": "amapleaf",
     "repository": {
-        "url": "https://github.com/amapleaf/linker-script"
+        "url": "https://github.com/phyloong/linker-script"
     },
-    "version": "0.1.0",
+    "version": "0.2.0",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.74.0"
     },
     "categories": [
-        "Other"
+        "Programming Languages",
+        "Snippets"
+    ],
+    "keywords": [
+        "linker script",
+        "linker",
+        "gnu ld",
+        "lds",
+        "ld",
+        "elf",
+        "embedded",
+        "bare metal",
+        "completion",
+        "hover",
+        "syntax highlighting",
+        "snippets"
     ],
     "activationEvents": [
         "onLanguage:ld"
@@ -41,6 +56,16 @@
                 "path": "./syntaxes/linker-script.tmLanguage.json"
             }
         ]
+    },
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": true,
+            "description": "Every feature reads the open document through the editor API; the extension never runs workspace code and never writes files."
+        },
+        "virtualWorkspaces": {
+            "supported": true,
+            "description": "Completion, hover, and highlighting only read the open document, so they also work in virtual workspaces."
+        }
     },
     "main": "./dist/extension.js",
     "scripts": {

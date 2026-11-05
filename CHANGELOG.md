@@ -1,5 +1,26 @@
 # Change Log
 
-## v0.1.0
+## 0.2.0
+
+### Breaking Changes
+
+- **New language id.** Linker scripts are now the dedicated language `linker-script` (contributed by this extension, associated with `.lds` and `.ld`), instead of being edited as plain text. Any setting or snippet override that was scoped to `plaintext` no longer applies to these files; scope it to `linker-script` or `ld` instead.
+- **Plain-text completion removed.** Completion and hover are no longer registered for the `plaintext` language id. A document that is not `linker-script` or `ld` receives no items and no tooltips.
+- **Minimum VS Code version raised from 1.30.0 to 1.74.0.** `engines.vscode` is now `^1.74.0`; older editors mark the extension as incompatible rather than installing it.
+
+### Added
+
+- Context-filtered completion for 69 keywords, with scope scanning over `SECTIONS`, output section bodies, `MEMORY`, `PHDRS`, `VERSION` and `OVERLAY`, and a full-keyword fallback when the context is uncertain.
+- Hover documentation for every keyword: derived signature, one-sentence summary, and a usage example.
+- A TextMate grammar with scope root `source.linker-script`, plus grammar fixtures for every construct family and the malformed cases.
+- A language contribution with `/* */` comments, bracket pairs, folding markers, and a word pattern that keeps `SORT_BY_NAME` and `.text.foo` whole.
+- Compatibility registration for the `ld` language id, so completion and hover still work when another extension owns the `.lds`/`.ld` association.
+
+### Changed
+
+- Marketplace metadata rewritten to describe the shipped behavior: new description, the `Programming Languages` and `Snippets` categories, keywords, and honest workspace capability declarations (no workspace writes, so untrusted and virtual workspaces are supported).
+- Packaging now ships the esbuild bundle `dist/extension.js` (the previous `out/` TypeScript build is gone).
+
+## 0.1.0
 
 - Complete the auto-fill feature for basic keywords.
