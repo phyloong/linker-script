@@ -1,0 +1,20 @@
+docs/demo.lds
+  h_ee8a6db81c66e8 1-52
+.vscodeignore
+  h_ee8a6db81c66e8 8
+README.md
+  h_ee8a6db81c66e8 14-27
+openspec/changes/archive/2026-11-05-prepare-0-2-0-release/tasks.md
+  h_ee8a6db81c66e8 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9803df5a1d6d781b18876d1aaa1018423d960c8c",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
