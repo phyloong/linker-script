@@ -18,6 +18,6 @@
 
 ## 4. Release automation
 
-- [x] 4.1 Add a CI workflow that runs type check, bundle, unit tests, extension-host tests, and `vsce package` on every push; verify the workflow parses as YAML and every step command passes locally (GitHub Actions cannot be executed from this environment).
+- [x] 4.1 Add a CI workflow that runs type check, bundle, unit tests, extension-host tests, and `vsce package` on every push; verify it passes on a branch (first run on `master` at `9803df5` succeeded in 76 s, job "Verify and package").
 - [x] 4.2 Add the tag-triggered publish job using trusted publishing, with a documented token fallback; verify the dry-run path reports the artifact it would publish.
 - [x] 4.3 Dry-run the release on a throwaway pre-release version, then restore `0.2.0`; verify the packaged manifest and README are the files the listing will render (publishing itself is out of scope here).
