@@ -1,0 +1,16 @@
+.github/workflows/release.yml
+  h_ee8a6db81c66e8 3-5,10,93-103
+AGENTS.md
+  h_ee8a6db81c66e8 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8177113ed4f81dcbd95da47f9318d916168ac8ee",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
