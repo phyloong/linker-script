@@ -1,0 +1,20 @@
+AGENTS.md
+  h_ee8a6db81c66e8 7,22
+CHANGELOG.md
+  h_ee8a6db81c66e8 3
+package-lock.json
+  h_ee8a6db81c66e8 3,9
+package.json
+  h_ee8a6db81c66e8 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "770c1459fc384207a919ff41b9b8aec911ee11f5",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
