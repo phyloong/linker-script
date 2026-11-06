@@ -1,0 +1,68 @@
+AGENTS.md
+  h_ee8a6db81c66e8 24,35,55,72
+CHANGELOG.md
+  h_ee8a6db81c66e8 3-13
+README.md
+  h_ee8a6db81c66e8 7,89,91
+esbuild.js
+  h_ee8a6db81c66e8 17-20
+openspec/changes/archive/2026-11-05-add-keyword-hover/design.md
+  h_ee8a6db81c66e8 7
+openspec/changes/archive/2026-11-05-improve-keyword-completion/design.md
+  h_ee8a6db81c66e8 30,33
+openspec/changes/archive/2026-11-06-complete-version-completion/.openspec.yaml
+  h_ee8a6db81c66e8 1-2
+openspec/changes/archive/2026-11-06-complete-version-completion/README.md
+  h_ee8a6db81c66e8 1-3
+openspec/changes/archive/2026-11-06-complete-version-completion/design.md
+  h_ee8a6db81c66e8 1-107
+openspec/changes/archive/2026-11-06-complete-version-completion/proposal.md
+  h_ee8a6db81c66e8 1-53
+openspec/changes/archive/2026-11-06-complete-version-completion/specs/keyword-completion/spec.md
+  h_ee8a6db81c66e8 1-55
+openspec/changes/archive/2026-11-06-complete-version-completion/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 1-48
+openspec/changes/archive/2026-11-06-complete-version-completion/tasks.md
+  h_ee8a6db81c66e8 1-35
+openspec/specs/keyword-completion/spec.md
+  h_ee8a6db81c66e8 92-138
+openspec/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 76-79,84-110
+scripts/check-grammar-fixtures.mjs
+  h_ee8a6db81c66e8 23-43,70
+src/hover/HoverProvider.ts
+  h_ee8a6db81c66e8 13-16
+src/keywords/lookup.ts
+  h_ee8a6db81c66e8 30,43
+src/keywords/registry.ts
+  h_ee8a6db81c66e8 61-63,112,144,168,176,268,276,308,316,324,332,340,348,356,414,558,566,574,582,590,598,606,614,622,630,633-658
+src/keywords/scanner.ts
+  h_ee8a6db81c66e8 63-65,82,87-88,100-101,167
+src/test/extension.test.ts
+  h_ee8a6db81c66e8 26-28,37-38,63-71,122-145,155-157,159,164,243-253,270-283,306,315-325,331-334,340-341,344-367,373-374,376-377,383-384,386-400
+src/test/unit/keywords.test.ts
+  h_ee8a6db81c66e8 60-62,75,78-79,138-140,142-149,151-153,155-156,210-219
+src/test/unit/lookup.test.ts
+  h_ee8a6db81c66e8 29-41,50-53,64-69
+src/test/unit/placeholder.test.ts
+  h_ee8a6db81c66e8 2-4,8,12-16
+src/test/unit/scanner.test.ts
+  h_ee8a6db81c66e8 56-61,96-109,128
+src/test/unit/signature.test.ts
+  h_ee8a6db81c66e8 56-59
+syntaxes/linker-script.tmLanguage.json
+  h_ee8a6db81c66e8 617,647-650,664-702
+test/grammar/version.ld
+  h_ee8a6db81c66e8 24-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "204c79ba111c22440ef4723583ac3d8d60c31146",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
