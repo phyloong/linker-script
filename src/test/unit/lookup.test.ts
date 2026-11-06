@@ -26,6 +26,19 @@ suite('Keyword lookup', function () {
         assert.strictEqual(keywordById('PROVIDE_HIDDEN')?.id, 'PROVIDE_HIDDEN');
     });
 
+    test('resolves the lower-case version-script ids without touching EXTERN', function () {
+        assert.strictEqual(keywordById('global')?.id, 'global');
+        assert.strictEqual(keywordById('local')?.id, 'local');
+        assert.strictEqual(keywordById('extern')?.id, 'extern');
+        assert.strictEqual(keywordById('extern')?.kind, 'command');
+        assert.strictEqual(keywordById('GLOBAL'), undefined, 'ids are case-sensitive');
+        assert.strictEqual(keywordById('EXTERN')?.id, 'EXTERN', 'the top-level command keeps its upper-case id');
+        assert.strictEqual(keywordById('EXTERN')?.snippet, 'EXTERN(${1:symbol})');
+        const words = wordsIn('V1.0 { global: init; };');
+        assert.ok(words.indexOf('global') !== -1, 'the version node body yields the global command');
+        assert.strictEqual(words.indexOf('V1.0'), -1, 'a version node name is not a keyword');
+    });
+
     test('matches only exact ids', function () {
         assert.deepStrictEqual(KEYWORDS.filter((item) => keywordById(item.id) !== item), []);
         for (const unknown of ['align', 'Provide', 'PROVID', 'ALIGNMENT', 'SECTIONS ', ' ALIGN', '', '.text', '__stack_top']) {
@@ -34,9 +47,10 @@ suite('Keyword lookup', function () {
     });
 
     test('does not fall back to a shorter id when a longer one exists', function () {
-        assert.strictEqual(keywordById('PROVIDE_HIDDEN')?.summary,
-            'Like PROVIDE, but the defined symbol is also hidden from the dynamic symbol table.');
-        assert.notStrictEqual(keywordById('PROVIDE_HIDDEN'), keywordById('PROVIDE'));
+        const hidden = keywordById('PROVIDE_HIDDEN');
+        assert.strictEqual(hidden?.id, 'PROVIDE_HIDDEN');
+        assert.notStrictEqual(hidden?.summary, keywordById('PROVIDE')?.summary);
+        assert.notStrictEqual(hidden, keywordById('PROVIDE'));
     });
 
     test('word pattern matches a whole keyword and nothing longer', function () {
@@ -45,6 +59,12 @@ suite('Keyword lookup', function () {
         assert.deepStrictEqual(wordsIn('SORT_BY_NAME(.ctors.*)'), ['SORT_BY_NAME']);
         assert.deepStrictEqual(wordsIn('PROVIDE(_end = .)'), ['PROVIDE']);
         assert.deepStrictEqual(wordsIn('!rx'), ['!']);
+    });
+
+    test('word pattern does not match the ! of a != comparison', function () {
+        assert.deepStrictEqual(wordsIn('ASSERT(x != 0, "msg")'), ['ASSERT']);
+        assert.deepStrictEqual(wordsIn('a != b'), []);
+        assert.deepStrictEqual(wordsIn('!rx'), ['!'], 'a prefix ! still matches');
     });
 
     test('word pattern rejects keywords inside longer identifiers', function () {

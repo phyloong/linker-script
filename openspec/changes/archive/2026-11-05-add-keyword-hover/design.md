@@ -4,7 +4,7 @@
 
 See proposal.md - Why. Constraints from prerequisite changes:
 
-- The registry entry from `improve-keyword-completion` already carries `snippet`, `id`, `kind`, `scopes`, and a `documentation` field reserved for this change.
+- The registry entry from `improve-keyword-completion` already carries `snippet`, `id`, `kind` and `scopes`; this change adds the `summary` and `example` strings that hold the documentation.
 - The language configuration defines a word pattern that keeps dotted section names and underscored commands together, but the hover provider still needs its own range check so it does not fire on arbitrary substrings.
 
 ## Goals / Non-Goals

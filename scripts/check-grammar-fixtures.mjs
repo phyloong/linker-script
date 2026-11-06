@@ -21,6 +21,27 @@ const COMMENT = '//';
 const HEADER = new RegExp('^' + COMMENT + ' SYNTAX TEST "' + SCOPE + '"');
 
 /**
+ * A leaf scope that loses its ".ld" suffix still colors correctly, but every
+ * theme override written for this grammar targets the suffix, so the loss is
+ * silent. The grammar's root scopeName is the only exception; the top-level
+ * "name" is a display label rather than a scope, which is why the walk starts
+ * at the repository.
+ */
+function checkLeafScopes(node, path, problems) {
+    if (Array.isArray(node)) {
+        node.forEach((child, index) => checkLeafScopes(child, `${path}[${index}]`, problems));
+        return;
+    }
+    if (node === null || typeof node !== 'object') return;
+    for (const [key, value] of Object.entries(node)) {
+        if (key === 'name' && typeof value === 'string' && !value.endsWith('.ld')) {
+            problems.push(`${GRAMMAR}: scope "${value}" at ${path}.name does not end with ".ld"`);
+        }
+        checkLeafScopes(value, `${path}.${key}`, problems);
+    }
+}
+
+/**
  * A dangling "#include" quietly turns a whole construct uncolored instead of
  * failing, so the grammar is checked structurally before the fixtures run.
  */
@@ -46,6 +67,7 @@ function checkGrammar() {
     for (const name of seen) {
         if (!known.has(name)) problems.push(`${GRAMMAR}: include "#${name}" has no repository entry`);
     }
+    checkLeafScopes(grammar.repository, 'repository', problems);
     for (const problem of problems) console.error(problem);
     return problems.length;
 }

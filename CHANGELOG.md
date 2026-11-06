@@ -1,5 +1,16 @@
 # Change Log
 
+## Unreleased
+
+### Added
+
+- Completion and hover inside `VERSION` blocks for the version-script commands `global`, `local` and `extern`, which bring the registry to 72 keywords.
+- Grammar coverage for `extern "C++" { ... }` language blocks and for version node inheritance, with fixture assertions over every covered token.
+
+### Changed
+
+- The syntax-highlighting requirement now names the inline scope assertions in the `.ld` fixtures instead of calling them snapshot tests.
+
 ## 0.2.0
 
 ### Breaking Changes

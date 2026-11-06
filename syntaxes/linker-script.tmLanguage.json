@@ -614,7 +614,7 @@
             ]
         },
         "version-node": {
-            "begin": "([A-Za-z_][\\w.$-]*)\\s*(\\{)?",
+            "begin": "(?<![\\w.$])([A-Za-z_][\\w.$-]*)\\s*(\\{)?",
             "beginCaptures": {
                 "1": {
                     "name": "entity.name.tag.version.ld"
@@ -644,8 +644,50 @@
                     "include": "#strings"
                 },
                 {
-                    "match": "\\b(?:global|local)\\b",
+                    "include": "#version-extern"
+                },
+                {
+                    "match": "\\b(?:global|local|extern)\\b",
                     "name": "keyword.other.version.ld"
+                },
+                {
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$]*",
+                    "name": "entity.name.symbol.ld"
+                },
+                {
+                    "include": "#operators"
+                },
+                {
+                    "include": "#punctuation"
+                }
+            ]
+        },
+        "version-extern": {
+            "comment": "An extern language block owns its braces, so the enclosing version node does not end on the nested closing brace.",
+            "begin": "\\b(extern)\\s*(\"[^\"]*\")\\s*(\\{)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.version.ld"
+                },
+                "2": {
+                    "name": "string.quoted.double.ld"
+                },
+                "3": {
+                    "name": "punctuation.section.block.begin.ld"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.block.end.ld"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#strings"
                 },
                 {
                     "match": "(?<![\\w.$])[A-Za-z_][\\w.$]*",

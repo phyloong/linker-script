@@ -23,6 +23,9 @@ import * as vscode from 'vscode';
 import { SUPPORTED_LANGUAGE_IDS } from '../languages';
 import { registerCompletionProviders, registerHoverProviders } from '../extension';
 import { CompletionProvider } from '../Completion';
+import { KEYWORDS } from '../keywords/registry';
+import { keywordById } from '../keywords/lookup';
+import { signatureOf } from '../keywords/signature';
 import { HoverProvider } from '../hover/HoverProvider';
 
 const EXTENSION_ID = 'amapleaf.linker-script';
@@ -31,8 +34,8 @@ const EXTENSION_ID = 'amapleaf.linker-script';
 // extension, so the activation test does not depend on the order of the suite.
 const activeAtHostStart = vscode.extensions.getExtension(EXTENSION_ID)?.isActive === true;
 
-async function openAndShow(languageId: string): Promise<vscode.TextDocument> {
-    const document = await vscode.workspace.openTextDocument({ language: languageId, content: 'SECTIONS' });
+async function openAndShow(languageId: string, content: string = 'SECTIONS'): Promise<vscode.TextDocument> {
+    const document = await vscode.workspace.openTextDocument({ language: languageId, content });
     // Showing the document is what the editor does when a user opens a file;
     // that is the event that makes VS Code deliver onLanguage activation.
     await vscode.window.showTextDocument(document);
@@ -55,6 +58,15 @@ async function waitForActivation(timeoutMs: number): Promise<boolean> {
 
 function labelOf(item: vscode.CompletionItem): string {
     return typeof item.label === 'string' ? item.label : item.label.label;
+}
+
+// The kind the editor was handed for each label, so one lookup per assertion.
+function kindsOf(items: vscode.CompletionItem[]): Map<string, vscode.CompletionItemKind | undefined> {
+    const kinds = new Map<string, vscode.CompletionItemKind | undefined>();
+    for (const item of items) {
+        kinds.set(labelOf(item), item.kind);
+    }
+    return kinds;
 }
 
 async function completionsAt(document: vscode.TextDocument,
@@ -107,6 +119,30 @@ function hoverText(hovers: vscode.Hover[]): string {
     return parts.join('\n');
 }
 
+// The tooltip has to be the markdown the design asks for, not a plain string
+// that happens to contain the same words: signature block, summary, example
+// block. The expected summary and example come from the registry, so this
+// checks the rendering rather than a second copy of the prose.
+function assertMarkdownTooltip(hover: vscode.Hover, signature: string, keywordId: string): void {
+    const entry = keywordById(keywordId);
+    if (entry === undefined) {
+        assert.fail('the registry contains ' + keywordId);
+    }
+    const content = hover.contents[0];
+    assert.ok(content instanceof vscode.MarkdownString, 'the tooltip is markdown, not a plain string');
+    assert.notStrictEqual(content.isTrusted, true,
+        'the tooltip renders no command links, so it stays untrusted');
+    const value = content.value;
+    assert.ok(value.indexOf('```ld\n' + signature + '\n```') !== -1,
+        'the signature is rendered in a fenced code block: ' + value);
+    // appendText escapes markdown characters, so the expected form of the
+    // summary is the one the platform produces for plain text.
+    const summaryText = new vscode.MarkdownString().appendText(entry.summary).value;
+    assert.ok(value.indexOf(summaryText) !== -1, 'the summary is rendered as text: ' + value);
+    assert.ok(value.indexOf('```ld\n' + entry.example + '\n```') !== -1,
+        'the example is rendered in a fenced code block: ' + value);
+}
+
 suite('Extension Tests', function () {
 
     test('activates for a linker-script document with no workspace folder', async function () {
@@ -116,13 +152,16 @@ suite('Extension Tests', function () {
         assert.strictEqual(await waitForActivation(5000), true, 'showing the document activated the extension');
     });
 
+    // Both documents are blank on purpose: the editor adds its own word-based
+    // suggestions for words that occur in the document, so a document spelling
+    // the expected label would pass even with no provider registered.
     test('offers keywords to linker-script documents', async function () {
-        const labels = await completionLabels(await openAndShow('linker-script'));
+        const labels = await completionLabels(await openAndShow('linker-script', '\n'));
         assert.ok(labels.includes('SECTIONS'), 'SECTIONS completion is offered');
     });
 
     test('offers no keywords to plain text documents', async function () {
-        const labels = await completionLabels(await openAndShow('plaintext'));
+        const labels = await completionLabels(await openAndShow('plaintext', '\n'));
         assert.ok(!labels.includes('SECTIONS'), 'plaintext receives no linker keywords');
         assert.ok(!labels.includes('ENTRY'), 'plaintext receives no linker keywords');
     });
@@ -201,6 +240,17 @@ suite('Extension Tests', function () {
         assert.ok(!labels.includes('BYTE'), 'data commands are absent inside MEMORY');
     });
 
+    test('offers the version commands inside VERSION and no other block keywords', async function () {
+        const document = await openWithContent('VERSION {\n    V1.0 {\n        \n    }\n}\n');
+        const labels = await labelsAt(document, 2, 8);
+        assert.ok(labels.includes('global'), 'global is offered inside VERSION');
+        assert.ok(labels.includes('local'), 'local is offered inside VERSION');
+        assert.ok(labels.includes('extern'), 'extern is offered inside VERSION');
+        assert.ok(!labels.includes('ENTRY'), 'ENTRY is absent inside VERSION');
+        assert.ok(!labels.includes('SECTIONS'), 'SECTIONS is absent inside VERSION');
+        assert.ok(!labels.includes('INSERT'), 'INSERT is absent inside VERSION');
+    });
+
     test('returns every keyword when a brace is unbalanced', async function () {
         const document = await openWithContent('SECTIONS {\n}\n}\n');
         const labels = await labelsAt(document, 2, 1);
@@ -215,6 +265,20 @@ suite('Extension Tests', function () {
         const labels = await labelsAt(document, 3, 8);
         assert.ok(labels.includes('SECTIONS'), 'top-level items are present after an INCLUDE');
         assert.ok(labels.includes('BYTE'), 'section-body items are present too');
+    });
+
+    // The comment never closes, so the cursor is not inside a comment: the
+    // text after the cursor has to decide that, and it finds no `*/`.
+    test('returns every keyword when a block comment is never closed', async function () {
+        const document = await openWithContent('SECTIONS {\n    /* unfinished\n    \n');
+        const position = new vscode.Position(2, 4);
+        const labels = await labelsAt(document, position.line, position.character);
+        // SECTIONS is a top-level item and BYTE a section-body one, so seeing
+        // both is what proves the filtering was skipped rather than misplaced.
+        assert.ok(labels.includes('SECTIONS'), 'top-level items are present after an unclosed comment');
+        assert.ok(labels.includes('BYTE'), 'section-body items are present too');
+        assert.strictEqual(new CompletionProvider().provideCompletionItems(document, position).length, KEYWORDS.length,
+            'the provider offers the unfiltered registry');
     });
 
     test('returns no items inside a block comment', async function () {
@@ -239,12 +303,7 @@ suite('Extension Tests', function () {
     });
 
     test('maps registry categories to completion item kinds', async function () {
-        const document = await openWithContent('\n');
-        const items = await completionsAt(document, 0, 0);
-        const kinds = new Map<string, vscode.CompletionItemKind | undefined>();
-        for (const item of items) {
-            kinds.set(labelOf(item), item.kind);
-        }
+        const kinds = kindsOf(await completionsAt(await openWithContent('\n'), 0, 0));
         assert.strictEqual(kinds.get('SECTIONS'), vscode.CompletionItemKind.Struct, 'SECTIONS renders as a block');
         assert.strictEqual(kinds.get('MEMORY'), vscode.CompletionItemKind.Struct, 'MEMORY renders as a block');
         assert.strictEqual(kinds.get('PHDRS'), vscode.CompletionItemKind.Struct, 'PHDRS renders as a block');
@@ -253,48 +312,92 @@ suite('Extension Tests', function () {
         assert.strictEqual(kinds.get('SIZEOF'), vscode.CompletionItemKind.Function, 'SIZEOF renders as a function');
         assert.strictEqual(kinds.get('ENTRY'), vscode.CompletionItemKind.Method, 'ENTRY renders as a command');
         assert.notStrictEqual(kinds.get('SECTIONS'), kinds.get('ENTRY'), 'blocks and commands differ');
+
+        // Region fields and plain keywords only appear in their own scopes, so
+        // each needs the document that offers it.
+        const memoryKinds = kindsOf(await completionsAt(await openWithContent('MEMORY {\n    \n}\n'), 1, 4));
+        assert.strictEqual(memoryKinds.get('ORIGIN'), vscode.CompletionItemKind.Field,
+            'ORIGIN renders as a region field');
+        assert.strictEqual(memoryKinds.get('LENGTH'), vscode.CompletionItemKind.Field,
+            'LENGTH renders as a region field');
+        const sectionsKinds = kindsOf(await completionsAt(await openWithContent('SECTIONS {\n    \n}\n'), 1, 4));
+        assert.strictEqual(sectionsKinds.get('NOLOAD'), vscode.CompletionItemKind.Keyword,
+            'NOLOAD renders as a keyword');
     });
 
     test('shows the signature, summary and example on hover over ALIGN', async function () {
         const document = await openWithContent('SECTIONS {\n    .text : { . = ALIGN(8); *(.text) }\n}\n');
         const hovers = await hoverAt(document, 'ALIGN');
-        const text = hoverText(hovers);
-        assert.ok(text.indexOf('ALIGN(expression)') !== -1, 'the derived signature is shown: ' + text);
-        assert.ok(text.indexOf('location counter') !== -1, 'the summary is shown');
-        assert.ok(text.indexOf('ALIGN(8)') !== -1, 'the example is shown');
-        // The design asks for fenced blocks, not plain strings: a tooltip that
-        // dropped the fences would still satisfy the assertions above.
-        assert.ok(hovers[0].contents[0] instanceof vscode.MarkdownString,
-            'the tooltip is markdown, not a plain string');
-        assert.ok(hovers[0].contents[0].value.indexOf('```ld\nALIGN(expression)\n```') !== -1,
-            'the signature is rendered in a fenced code block');
+        assert.ok(hovers.length > 0, 'a tooltip is produced');
+        // The expected signature, summary and example come from the registry so
+        // the check follows the data instead of a second copy of the prose.
+        assertMarkdownTooltip(hovers[0], 'ALIGN(expression)', 'ALIGN');
     });
 
     test('shows the block form on hover over MEMORY', async function () {
         const document = await openWithContent(
             'MEMORY {\n    ram (rwx) : ORIGIN = 0x20000000, LENGTH = 64K\n}\n');
-        const text = hoverText(await hoverAt(document, 'MEMORY', 1));
+        const hovers = await hoverAt(document, 'MEMORY', 1);
+        const text = hoverText(hovers);
         assert.ok(text.indexOf('MEMORY { ... }') !== -1, 'the collapsed block form is shown: ' + text);
-        assert.ok(text.indexOf('memory regions') !== -1, 'the summary is shown');
         assert.ok(text.indexOf('ORIGIN = 0x20000000') !== -1, 'the example is shown');
+        assertMarkdownTooltip(hovers[0], 'MEMORY { ... }', 'MEMORY');
+    });
+
+    test('shows the signature, summary and example on hover over the version commands', async function () {
+        const document = await openWithContent(
+            'VERSION {\n    V1.0 {\n        global: init;\n        local: hidden;\n'
+            + '        extern "C++" { foo; };\n    };\n};\n');
+        // The expected signature is derived from the snippet in the registry,
+        // so a snippet change moves the assertion with it.
+        for (const id of ['global', 'local', 'extern']) {
+            const hovers = await hoverAt(document, id, 1);
+            assert.ok(hovers.length > 0, 'a tooltip is produced for ' + id);
+            const entry = keywordById(id);
+            if (entry === undefined) {
+                assert.fail('the registry contains ' + id);
+            }
+            assertMarkdownTooltip(hovers[0], signatureOf(entry), id);
+        }
+    });
+
+    test('shows no hover over a user-defined version node name', async function () {
+        const document = await openWithContent('VERSION {\n    V1.0 {\n        global: init;\n    };\n};\n');
+        assert.strictEqual((await hoverAt(document, 'V1.0', 0)).length, 0,
+            'V1.0 is a user-defined version node name');
     });
 
     test('shows both placements of PROVIDE on hover', async function () {
         const document = await openWithContent(
             'SECTIONS {\n    .text : { *(.text) }\n    PROVIDE(_etext = .);\n}\n');
-        const text = hoverText(await hoverAt(document, 'PROVIDE', 1));
+        const hovers = await hoverAt(document, 'PROVIDE', 1);
+        const text = hoverText(hovers);
         assert.ok(text.indexOf('PROVIDE(symbol = expression)') !== -1, 'the signature is shown: ' + text);
-        assert.ok(text.indexOf('top level') !== -1, 'the top-level placement is described');
-        assert.ok(text.indexOf('output sections') !== -1, 'the in-SECTIONS placement is described');
+        // The summary names both placements, so asserting it whole covers them.
+        assertMarkdownTooltip(hovers[0], 'PROVIDE(symbol = expression)', 'PROVIDE');
     });
 
     test('shows both placements of ASSERT on hover', async function () {
         const document = await openWithContent(
             'SECTIONS {\n    .text : { *(.text) }\n    ASSERT(SIZEOF(.text) > 0, "empty")\n}\n');
-        const text = hoverText(await hoverAt(document, 'ASSERT', 1));
+        const hovers = await hoverAt(document, 'ASSERT', 1);
+        const text = hoverText(hovers);
         assert.ok(text.indexOf('ASSERT(expression, message)') !== -1, 'the signature is shown: ' + text);
-        assert.ok(text.indexOf('top level') !== -1, 'the top-level placement is described');
-        assert.ok(text.indexOf('output sections') !== -1, 'the in-SECTIONS placement is described');
+        assertMarkdownTooltip(hovers[0], 'ASSERT(expression, message)', 'ASSERT');
+    });
+
+    // Hover is scope-agnostic on purpose: a registered word is answered
+    // wherever it appears, comments and strings included.
+    test('answers hover inside a comment and a string literal', async function () {
+        const comment = await openWithContent('/* MEMORY is only mentioned here */\n');
+        const commentHovers = await hoverAt(comment, 'MEMORY', 1);
+        assert.ok(commentHovers.length > 0, 'a keyword inside a block comment still has a tooltip');
+        assertMarkdownTooltip(commentHovers[0], 'MEMORY { ... }', 'MEMORY');
+
+        const string = await openWithContent('OUTPUT_FORMAT("ALIGN")\n');
+        const stringHovers = await hoverAt(string, 'ALIGN', 1);
+        assert.ok(stringHovers.length > 0, 'a keyword inside a string literal still has a tooltip');
+        assertMarkdownTooltip(stringHovers[0], 'ALIGN(expression)', 'ALIGN');
     });
 
     test('does not resolve a keyword inside a longer identifier', async function () {

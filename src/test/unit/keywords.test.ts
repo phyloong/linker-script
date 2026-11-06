@@ -57,6 +57,9 @@ const REGION_FIELD_IDS = ['ORIGIN', 'LENGTH'];
 // The optional (attr) list of a MEMORY region: every documented attribute.
 const REGION_ATTRIBUTE_IDS = ['R', 'W', 'X', 'A', 'I', 'L', '!'];
 
+// The version-script commands, spelled in lower case as the syntax writes them.
+const VERSION_IDS = ['global', 'local', 'extern'];
+
 const KINDS = ['block', 'command', 'function', 'field', 'keyword'];
 const SCOPES = ['top', 'sections', 'section-body', 'memory', 'phdrs', 'version', 'overlay'];
 
@@ -69,11 +72,11 @@ suite('Keyword registry', function () {
     });
 
     test('adds each missing keyword exactly once', function () {
-        for (const id of ADDED_IDS.concat(REGION_FIELD_IDS, REGION_ATTRIBUTE_IDS)) {
+        for (const id of ADDED_IDS.concat(REGION_FIELD_IDS, REGION_ATTRIBUTE_IDS, VERSION_IDS)) {
             assert.strictEqual(ids.filter((candidate) => candidate === id).length, 1, id + ' resolves to exactly one entry');
         }
-        assert.strictEqual(ids.length, 51 + ADDED_IDS.length + REGION_FIELD_IDS.length + REGION_ATTRIBUTE_IDS.length);
-        assert.strictEqual(KEYWORDS.length, 69);
+        assert.strictEqual(ids.length, 51 + ADDED_IDS.length + REGION_FIELD_IDS.length + REGION_ATTRIBUTE_IDS.length + VERSION_IDS.length);
+        assert.strictEqual(KEYWORDS.length, 72);
     });
 
     test('has no duplicate ids', function () {
@@ -132,22 +135,25 @@ suite('Keyword registry', function () {
         assert.deepStrictEqual(missing, [], 'hover can only show entries completion also offers');
     });
 
+    // The placement vocabulary agreed for registry prose: one fixed phrase per
+    // scope, so the rule below can be checked on every multi-scope entry rather
+    // than on a hand-picked few.
     test('multi-scope summaries name every placement in their scope list', function () {
-        const phrases: { [scope in KeywordScope]: string[] } = {
-            top: ['top level'],
-            sections: ['output section'],
-            'section-body': ['section body'],
-            memory: ['memory region'],
-            phdrs: ['program header'],
-            version: ['version'],
-            overlay: ['OVERLAY']
+        const phrases: { [scope in KeywordScope]: string } = {
+            top: 'top level',
+            sections: 'SECTIONS',
+            'section-body': 'output section',
+            memory: 'MEMORY',
+            phdrs: 'PHDRS',
+            version: 'VERSION',
+            overlay: 'overlay'
         };
-        for (const id of ['PROVIDE', 'ASSERT', 'ALIGN']) {
-            const item = entry(id);
-            assert.ok(item.scopes.length > 1, id + ' really lists several scopes');
+        const multiScope = KEYWORDS.filter((item) => item.scopes.length > 1);
+        assert.ok(multiScope.length > 1, 'the registry holds several multi-scope entries');
+        for (const item of multiScope) {
             for (const scope of item.scopes) {
-                const named = phrases[scope].some((phrase) => item.summary.indexOf(phrase) !== -1);
-                assert.ok(named, id + ' summary covers its ' + scope + ' placement');
+                assert.ok(item.summary.indexOf(phrases[scope]) !== -1,
+                    item.id + ' summary names its ' + scope + ' placement');
             }
         }
     });
@@ -199,6 +205,16 @@ suite('Keyword registry', function () {
     test('offers INSERT only where it is legal, never inside VERSION', function () {
         assert.ok(labels('top').indexOf('INSERT') !== -1, 'INSERT is a top-level command');
         assert.strictEqual(labels('version').indexOf('INSERT'), -1, 'INSERT is not a version-script command');
+    });
+
+    test('VERSION offers the version-script commands and no other block keywords', function () {
+        const version = labels('version');
+        for (const id of VERSION_IDS) {
+            assert.ok(version.indexOf(id) !== -1, id + ' is offered inside VERSION');
+        }
+        for (const id of ['ENTRY', 'SECTIONS', 'INSERT', 'MEMORY']) {
+            assert.strictEqual(version.indexOf(id), -1, id + ' is not offered inside VERSION');
+        }
     });
 
     test('VERSION placeholder embeds no newline', function () {

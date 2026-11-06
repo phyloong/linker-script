@@ -53,8 +53,10 @@ suite('Hover signature', function () {
     });
 
     test('prefers an explicit override over the derived form', function () {
-        const overridden = { snippet: 'FOO(${1:x}, ${2:y})', signature: 'FOO(x, y)' };
-        assert.strictEqual(signatureOf(overridden), 'FOO(x, y)');
+        // The override differs from the derived form, so ignoring it would fail.
+        const overridden = { snippet: 'FOO(${1:x}, ${2:y})', signature: 'FOO(a, b)' };
+        assert.strictEqual(deriveSignature(overridden.snippet), 'FOO(x, y)');
+        assert.strictEqual(signatureOf(overridden), 'FOO(a, b)');
         const derived = { snippet: 'FOO(${1:x}, ${2:y})' };
         assert.strictEqual(signatureOf(derived), 'FOO(x, y)');
     });

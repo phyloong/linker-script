@@ -4,7 +4,7 @@ Completion, hover documentation, and syntax highlighting for GNU linker script f
 
 ## Features
 
-- **Context-aware completion.** Each of the 69 built-in keywords is offered in the context it belongs to: commands at the top of the file, output section syntax directly inside `SECTIONS`, data commands and expression functions inside an output section body, region fields and attributes inside `MEMORY`, program header types inside `PHDRS`, and section descriptions inside `OVERLAY`. A keyword that takes arguments inserts a snippet with tab stops in place of them, and every item shows its one-sentence description next to the entry.
+- **Context-aware completion.** Each of the 72 built-in keywords is offered in the context it belongs to: commands at the top of the file, output section syntax directly inside `SECTIONS`, data commands and expression functions inside an output section body, region fields and attributes inside `MEMORY`, program header types inside `PHDRS`, version-script commands inside `VERSION`, and section descriptions inside `OVERLAY`. A keyword that takes arguments inserts a snippet with tab stops in place of them, and every item shows its one-sentence description next to the entry.
 - **Safe fallback.** When the surrounding braces no longer describe the file (an unmatched `}`, an unterminated block comment, or an `INCLUDE` earlier in the file), the extension stops guessing and offers every keyword instead of a possibly wrong subset. Inside a comment or a string it offers nothing.
 - **Hover documentation.** Hovering a keyword shows its signature, a one-sentence description, and a short usage example. The signature is derived from the same snippet completion inserts, so the two cannot drift apart.
 - **Syntax highlighting.** Comments, strings, decimal/hex/octal numbers with `K`/`M` suffixes, commands and block keywords, expression functions, output and input section names, the location counter `.`, symbols, region markers and attributes, program header types, version nodes, and operators each get their own scope.
@@ -86,9 +86,9 @@ Issues caused by the other extension's behavior belong in its repository, not th
 
 - **No diagnostics or formatting.** The extension never builds, links, or reformats; syntax errors are not reported and indentation is left alone.
 - **Completion is a keyword list, not a parser.** Items are filtered by the enclosing block, not by what is grammatically valid at that exact position, and the list is not narrowed by the typed prefix beyond the editor's own filtering. The `ld` compatibility path only exists when another extension contributes that language id.
-- **One block has no entries yet.** Inside a `VERSION` block the scope filter has no keywords registered, so completion returns an empty list there; the `VERSION` keyword itself is still offered at the top level and inserts a complete block.
+- **Version node names are not completed.** Inside a `VERSION` block completion offers the three version-script commands `global`, `local` and `extern`, but the version node names you write are your own identifiers and get no items.
 - **Hover is scope-agnostic.** A known keyword is documented wherever the cursor is, including inside comments and strings, because the word lookup deliberately ignores the block context.
-- **No symbol or filename completion.** Only the 69 registered linker script keywords are completed; symbols defined in your project and files on disk are not.
+- **No symbol or filename completion.** Only the 72 registered linker script keywords are completed; symbols defined in your project and files on disk are not.
 - **Highlighting covers linker script syntax only.** It is not a semantic model of your link: a script that a build step preprocesses with the C preprocessor before linking (for example `gcc -E`) is colored as written.
 - **No line-comment syntax.** `//` is not a comment in GNU linker scripts, so the language intentionally has no line comment; use `/* */`.
 

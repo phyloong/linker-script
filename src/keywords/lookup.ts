@@ -27,6 +27,7 @@ const ID_ALTERNATION = KEYWORDS
     .map((entry) => entry.id)
     // '!' is a prefix operator: in '(!rx)' the attribute letters follow it
     // directly, so it gets its own branch below instead of a word boundary.
+    // That branch excludes '!=', which is a comparison rather than the keyword.
     .filter((id) => id !== '!')
     .sort((left, right) => right.length - left.length || left.localeCompare(right))
     .map(escapeForRegExp)
@@ -39,5 +40,5 @@ const ID_ALTERNATION = KEYWORDS
  * TextDocument.getWordRangeAtPosition.
  */
 export function keywordWordPattern(): RegExp {
-    return new RegExp('(?<![A-Za-z0-9_$])(?:' + ID_ALTERNATION + ')(?![A-Za-z0-9_$])|!', 'g');
+    return new RegExp('(?<![A-Za-z0-9_$])(?:' + ID_ALTERNATION + ')(?![A-Za-z0-9_$])|!(?!=)', 'g');
 }

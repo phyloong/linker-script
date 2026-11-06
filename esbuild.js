@@ -14,7 +14,10 @@ const extensionConfig = {
     format: 'cjs',
     target: 'node16',
     external: ['vscode'],
-    sourcemap: !production,
+    // The packaged bundle must not reference a map that `.vscodeignore` leaves
+    // out of the VSIX. Test bundles keep their maps for local stack traces;
+    // they are never packaged.
+    sourcemap: false,
     minify: production,
     logLevel: 'info'
 };

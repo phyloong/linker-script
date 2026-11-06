@@ -60,7 +60,9 @@ export function scanScopes(text: string, cursorOffset: number = text.length): Sc
     const path: KeywordScope[] = [];
     let pending: KeywordScope | null = null;
     let inComment = false;
-    let inString = false;
+    // Which quote opened the current string, or null outside one. Both quote
+    // characters the grammar colors as strings behave the same way.
+    let stringQuote: '"' | "'" | null = null;
     let reason: ScanUncertainty | null = null;
 
     let index = 0;
@@ -77,13 +79,13 @@ export function scanScopes(text: string, cursorOffset: number = text.length): Sc
             continue;
         }
 
-        if (inString) {
+        if (stringQuote !== null) {
             if (character === '\\') {
                 index += 2;
                 continue;
             }
-            if (character === '"') {
-                inString = false;
+            if (character === stringQuote) {
+                stringQuote = null;
             }
             index += 1;
             continue;
@@ -95,8 +97,8 @@ export function scanScopes(text: string, cursorOffset: number = text.length): Sc
             continue;
         }
 
-        if (character === '"') {
-            inString = true;
+        if (character === '"' || character === "'") {
+            stringQuote = character === '"' ? '"' : "'";
             index += 1;
             continue;
         }
@@ -162,7 +164,7 @@ export function scanScopes(text: string, cursorOffset: number = text.length): Sc
             reason = reason === null ? 'unterminated-comment' : reason;
         }
     }
-    if (inString) {
+    if (stringQuote !== null) {
         inCommentOrString = true;
     }
 

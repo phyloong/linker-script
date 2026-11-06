@@ -10,7 +10,10 @@ function renderHoverMarkdown(entry: KeywordEntry): vscode.MarkdownString {
     // isTrusted is deliberately left at its false default: the content is only
     // code blocks and prose, so no command link needs to be enabled.
     markdown.appendCodeblock(signatureOf(entry), 'ld');
-    markdown.appendMarkdown(entry.summary);
+    // Plain text, not Markdown: a summary containing `_`, a backtick pair or
+    // `[x](y)` must show literally in the tooltip instead of turning into
+    // emphasis, code or a link.
+    markdown.appendText(entry.summary);
     markdown.appendCodeblock(entry.example, 'ld');
     return markdown;
 }

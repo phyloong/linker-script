@@ -27,10 +27,10 @@ See proposal.md - Why. Current implementation constraints:
 ### Registry entry shape
 
 ```
-{ id, kind, snippet, documentation, scopes }
+{ id, kind, snippet, scopes }
 ```
 
-`scopes` is a set drawn from `top | sections | section-body | memory | phdrs | version | overlay`. A keyword that is legal in several places lists all of them rather than being duplicated. `documentation` is authored here so the hover change reads the same source instead of a second table.
+`scopes` is a set drawn from `top | sections | section-body | memory | phdrs | version | overlay`. A keyword that is legal in several places lists all of them rather than being duplicated. This change only establishes the structural fields; the `summary` and `example` strings are added by the later `add-keyword-hover` change, which then reads the same table instead of keeping a second one.
 
 Alternative rejected: deriving scope from the GNU ld grammar at build time. The grammar is prose; a hand-maintained flag is smaller and reviewable.
 

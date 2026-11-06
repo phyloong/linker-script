@@ -58,8 +58,9 @@ export const EXAMPLE_MAX_LINES = 4;
 // MEMORY or VERSION, where expressions are rare and the item set is narrow.
 const EXPRESSION_SCOPES: readonly KeywordScope[] = ['top', 'sections', 'section-body', 'overlay'];
 
-// Commands legal both at top level and directly inside SECTIONS, but not in an
-// output section body (see the spec scenario "Inside an output section body").
+// Commands legal both at top level and directly inside SECTIONS or an overlay
+// section, but not in an output section body (see the spec scenario "Inside an
+// output section body").
 const TOP_AND_SECTIONS: readonly KeywordScope[] = ['top', 'sections', 'overlay'];
 
 export const KEYWORDS: readonly KeywordEntry[] = [
@@ -108,7 +109,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'GROUP',
         kind: 'command',
         snippet: 'GROUP(${1:lib.a} ${2:lib2.a})',
-        summary: 'Like INPUT, but the archives are searched again until no new references appear.',
+        summary: 'List archives that the linker revisits after each pass, so a member needed only by a later reference is still loaded.',
         example: 'GROUP(libgcc.a libc.a)',
         scopes: ['top']
     },
@@ -140,7 +141,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'ASSERT',
         kind: 'command',
         snippet: 'ASSERT(${1:expression}, ${2:message})',
-        summary: 'Stop the link with a message when an expression is zero; allowed at top level, between output sections, and inside OVERLAY.',
+        summary: 'Stop the link with a message when an expression evaluates to zero, at top level, in SECTIONS, or in an overlay.',
         example: 'ASSERT(SIZEOF(.text) > 0, "text is empty")\nSECTIONS { .data : { *(.data) } ASSERT(SIZEOF(.data) > 0, "no .data") }',
         scopes: TOP_AND_SECTIONS
     },
@@ -164,7 +165,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'PROVIDE',
         kind: 'command',
         snippet: 'PROVIDE(${1:symbol} = ${2:expression})',
-        summary: 'Create a symbol only when the link needs it and nothing else defines it; allowed at top level, between output sections, and inside OVERLAY.',
+        summary: 'Create a symbol only when something needs it and nothing else defines it, at top level, in SECTIONS, or in an overlay.',
         example: 'PROVIDE(__stack_top = 0x20001000)\nSECTIONS { .text : { *(.text) } PROVIDE(_etext = .); }',
         scopes: TOP_AND_SECTIONS
     },
@@ -172,7 +173,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'PROVIDE_HIDDEN',
         kind: 'command',
         snippet: 'PROVIDE_HIDDEN(${1:symbol} = ${2:expression})',
-        summary: 'Like PROVIDE, but the defined symbol is also hidden from the dynamic symbol table.',
+        summary: 'Define a symbol the way PROVIDE does but keep it out of the dynamic symbol table, at top level, in SECTIONS, or in an overlay.',
         example: 'PROVIDE_HIDDEN(_end = .);',
         scopes: TOP_AND_SECTIONS
     },
@@ -264,7 +265,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'KEEP',
         kind: 'command',
         snippet: 'KEEP(*(${1:.text}))',
-        summary: 'Shield an input section from a garbage collection pass that would otherwise drop it.',
+        summary: 'Shield an input section from a garbage collection pass that would otherwise drop it, in SECTIONS, in an output section, or in an overlay.',
         example: '.text : { KEEP(*(.init)) }',
         scopes: ['sections', 'section-body', 'overlay']
     },
@@ -272,7 +273,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SORT',
         kind: 'command',
         snippet: 'SORT(${1:.text*})',
-        summary: 'Match input sections and order them by name; the long spelling is SORT_BY_NAME.',
+        summary: 'Sort the matched input sections by name, in SECTIONS, in an output section, or in an overlay; the long spelling is SORT_BY_NAME.',
         example: '.text : { SORT(.text.*) }',
         scopes: ['sections', 'section-body', 'overlay']
     },
@@ -304,7 +305,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'DISCARD',
         kind: 'keyword',
         snippet: '/DISCARD/ : { *(${1:.comment}) }',
-        summary: 'Collect the input sections that are to be left out of the output file.',
+        summary: 'Collect input sections that are to be left out of the output file, inside SECTIONS or an overlay.',
         example: '/DISCARD/ : { *(.comment) }',
         scopes: ['sections', 'overlay']
     },
@@ -312,7 +313,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'NOLOAD',
         kind: 'keyword',
         snippet: 'NOLOAD',
-        summary: 'Reserve memory for an output section without giving it contents in the file.',
+        summary: 'Reserve memory for an output section without giving it contents in the file, inside SECTIONS or an overlay.',
         example: '.noinit (NOLOAD) : { *(.noinit) }',
         scopes: ['sections', 'overlay']
     },
@@ -320,7 +321,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'DSECT',
         kind: 'keyword',
         snippet: 'DSECT',
-        summary: 'Mark an output section as a dummy that occupies no space in the output file.',
+        summary: 'Mark an output section as a dummy that occupies no space in the output file, inside SECTIONS or an overlay.',
         example: '.dummy DSECT : { *(.dummy) }',
         scopes: ['sections', 'overlay']
     },
@@ -328,7 +329,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'COPY',
         kind: 'keyword',
         snippet: 'COPY',
-        summary: 'Mark an output section as neither allocated in memory nor loaded from the file.',
+        summary: 'Mark an output section as neither allocated in memory nor loaded from the file, inside SECTIONS or an overlay.',
         example: '.info COPY : { *(.info) }',
         scopes: ['sections', 'overlay']
     },
@@ -336,7 +337,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'INFO',
         kind: 'keyword',
         snippet: 'INFO',
-        summary: 'Mark an output section as loaded but not allocated in the memory image.',
+        summary: 'Mark an output section as loaded but not allocated in the memory image, inside SECTIONS or an overlay.',
         example: '.stabs INFO : { *(.stabs) }',
         scopes: ['sections', 'overlay']
     },
@@ -344,7 +345,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'CREATE_OBJECT_SYMBOLS',
         kind: 'keyword',
         snippet: 'CREATE_OBJECT_SYMBOLS',
-        summary: 'Create one symbol for each input file whose contents reach the section.',
+        summary: 'Create one symbol per input file whose contents reach the section, in SECTIONS, in an output section, or in an overlay.',
         example: '.text : { CREATE_OBJECT_SYMBOLS *(.text) }',
         scopes: ['sections', 'section-body', 'overlay']
     },
@@ -352,7 +353,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'CONSTRUCTORS',
         kind: 'keyword',
         snippet: 'CONSTRUCTORS',
-        summary: 'Emit the C++ constructor and destructor tables for the output section.',
+        summary: 'Emit the C++ constructor and destructor tables for the section, in SECTIONS, in an output section, or in an overlay.',
         example: '.ctors : { CONSTRUCTORS }',
         scopes: ['sections', 'section-body', 'overlay']
     },
@@ -410,7 +411,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'ALIGN',
         kind: 'function',
         snippet: 'ALIGN(${1:expression})',
-        summary: 'Move the location counter to the next multiple of the expression, in a section body or an assignment at top level.',
+        summary: 'Move the location counter to the next multiple of the expression, inside an output section or in an assignment at top level.',
         example: '.text : { . = ALIGN(8); *(.text) }\n_end = ALIGN(16);',
         scopes: ['top', 'section-body']
     },
@@ -554,7 +555,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'ABSOLUTE',
         kind: 'function',
         snippet: 'ABSOLUTE(${1:expression})',
-        summary: 'Treat the expression as an absolute address rather than one relative to a section.',
+        summary: 'Treat an expression as an absolute address, not one relative to a section, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_start = ABSOLUTE(0x8000);',
         scopes: EXPRESSION_SCOPES
     },
@@ -562,7 +563,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'ADDR',
         kind: 'function',
         snippet: 'ADDR(${1:section})',
-        summary: 'Return the virtual address of the named section.',
+        summary: 'Return the virtual address of a named section, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_text = ADDR(.text);',
         scopes: EXPRESSION_SCOPES
     },
@@ -570,7 +571,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'BLOCK',
         kind: 'function',
         snippet: 'BLOCK(${1:expression})',
-        summary: 'Round the location counter up to the expression, as ALIGN does in expressions.',
+        summary: 'Round the current position up to a multiple of the expression, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_data = BLOCK(16);',
         scopes: EXPRESSION_SCOPES
     },
@@ -578,7 +579,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'DEFINED',
         kind: 'function',
         snippet: 'DEFINED(${1:symbol})',
-        summary: 'Return one when the symbol already has a definition and zero when it does not.',
+        summary: 'Return one when the symbol already has a definition and zero when it has none, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_init = DEFINED(_init) ? _init : 0;',
         scopes: EXPRESSION_SCOPES
     },
@@ -586,7 +587,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'LOADADDR',
         kind: 'function',
         snippet: 'LOADADDR(${1:section})',
-        summary: 'Return the load address of the named section.',
+        summary: 'Return the load address of a named section, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_text_load = LOADADDR(.text);',
         scopes: EXPRESSION_SCOPES
     },
@@ -594,7 +595,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'MAX',
         kind: 'function',
         snippet: 'MAX(${1:expression1}, ${2:expression2})',
-        summary: 'Return the greater of two expressions.',
+        summary: 'Return the greater of two expressions, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_top = MAX(_end, 0x1000);',
         scopes: EXPRESSION_SCOPES
     },
@@ -602,7 +603,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'MIN',
         kind: 'function',
         snippet: 'MIN(${1:expression1}, ${2:expression2})',
-        summary: 'Return the lesser of two expressions.',
+        summary: 'Return the lesser of two expressions, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_size = MIN(_end - _start, 4K);',
         scopes: EXPRESSION_SCOPES
     },
@@ -610,7 +611,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'NEXT',
         kind: 'function',
         snippet: 'NEXT(${1:expression})',
-        summary: 'Return the following address that satisfies the alignment of the section being built.',
+        summary: 'Return the following address that meets the alignment of the section being built, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_after = NEXT(0x100);',
         scopes: EXPRESSION_SCOPES
     },
@@ -618,7 +619,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SIZEOF',
         kind: 'function',
         snippet: 'SIZEOF(${1:section})',
-        summary: 'Return the size in bytes of the named section.',
+        summary: 'Report the total byte count of a named section, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '_text_size = SIZEOF(.text);',
         scopes: EXPRESSION_SCOPES
     },
@@ -626,9 +627,35 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SIZEOF_HEADERS',
         kind: 'field',
         snippet: 'SIZEOF_HEADERS',
-        summary: 'Return how many bytes the ELF program headers will occupy.',
+        summary: 'Give the number of bytes the ELF program headers take, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: '. = SIZEOF_HEADERS;',
         scopes: EXPRESSION_SCOPES
+    },
+
+    // ------------------------------------------------- version script commands
+    {
+        id: 'global',
+        kind: 'keyword',
+        snippet: 'global: ${1:symbol};',
+        summary: 'Start the list of symbols a version node makes visible to programs linking against this library, inside VERSION.',
+        example: 'V1.0 { global: init; };',
+        scopes: ['version']
+    },
+    {
+        id: 'local',
+        kind: 'keyword',
+        snippet: 'local: ${1:symbol};',
+        summary: 'Start the list of symbols a version node keeps hidden from programs linking against this library, inside VERSION.',
+        example: 'V1.0 { local: hidden; };',
+        scopes: ['version']
+    },
+    {
+        id: 'extern',
+        kind: 'command',
+        snippet: 'extern "${1:C++}" {\n\t${2:symbol};\n};',
+        summary: 'Open a language block that changes how symbol names inside it are matched, inside VERSION.',
+        example: 'V1.0 { extern "C++" { "foo()"; }; };',
+        scopes: ['version']
     }
 ];
 
