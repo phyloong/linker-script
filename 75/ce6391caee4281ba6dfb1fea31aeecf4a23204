@@ -1,0 +1,26 @@
+openspec/changes/fix-version-node-inheritance/.openspec.yaml
+  h_ee8a6db81c66e8 1-2
+openspec/changes/fix-version-node-inheritance/design.md
+  h_ee8a6db81c66e8 1-73
+openspec/changes/fix-version-node-inheritance/proposal.md
+  h_ee8a6db81c66e8 1-29
+openspec/changes/fix-version-node-inheritance/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 1-45
+openspec/changes/fix-version-node-inheritance/tasks.md
+  h_ee8a6db81c66e8 1-25
+syntaxes/linker-script.tmLanguage.json
+  h_ee8a6db81c66e8 613,622-623
+test/grammar/version.ld
+  h_ee8a6db81c66e8 70-100,102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "75ce6391caee4281ba6dfb1fea31aeecf4a23204",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
