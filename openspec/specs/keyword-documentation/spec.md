@@ -21,8 +21,8 @@ The extension SHALL show a hover when the cursor is over a word that matches a k
 
 #### Scenario: Hovering a multi-scope keyword
 
-- **WHEN** the cursor is over `PROVIDE`, which is legal both at top level and inside `SECTIONS`
-- **THEN** the hover describes both placements rather than only one
+- **WHEN** the cursor is over `PROVIDE`, which is legal at top level, directly inside `SECTIONS`, in an output section body, and in an overlay
+- **THEN** the hover describes every one of those placements rather than only some of them
 
 ### Requirement: No hover outside the registry
 
