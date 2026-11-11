@@ -610,7 +610,7 @@
                 },
                 {
                     "comment": "A bare identifier at version-body level is an inheritance reference, never a node: a node always has a brace.",
-                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$-]*(?=\\s*;)",
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$-]*(?=\\s*(?:/\\*[^*]*\\*/\\s*)*;)",
                     "name": "entity.name.tag.version.ld"
                 },
                 {
@@ -619,13 +619,11 @@
             ]
         },
         "version-node": {
-            "begin": "(?<![\\w.$])([A-Za-z_][\\w.$-]*)\\s*(\\{)",
+            "comment": "The brace is required on the node line but stays outside the begin match: consuming it would make the begin span a line break, which drops every capture. A name alone at the end of the line also opens a node, so a brace on the next line still scopes the body.",
+            "begin": "(?<![\\w.$])([A-Za-z_][\\w.$-]*)\\s*(?=(?:/\\*[^*]*\\*/\\s*)*\\{|$)",
             "beginCaptures": {
                 "1": {
                     "name": "entity.name.tag.version.ld"
-                },
-                "2": {
-                    "name": "punctuation.section.block.begin.ld"
                 }
             },
             "end": "\\}",
