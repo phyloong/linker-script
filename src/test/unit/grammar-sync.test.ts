@@ -283,7 +283,11 @@ const GENERIC_COVERAGE: readonly GenericCoverage[] = [
     { id: 'PT_INTERP', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
     { id: 'PT_NOTE', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
     { id: 'PT_SHLIB', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
-    { id: 'PT_PHDR', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' }
+    { id: 'PT_PHDR', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
+    { id: 'PT_TLS', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
+    { id: 'PT_GNU_STACK', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
+    { id: 'PT_GNU_RELRO', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' },
+    { id: 'PT_GNU_EH_FRAME', fragment: 'PT_[A-Z_]+', scope: 'support.type.program-header.ld' }
 ];
 
 // The MEMORY region-field alternation lists short spellings beside the
@@ -308,9 +312,7 @@ interface GrammarOnlyKeyword {
 
 // Keywords the grammar colours on purpose without a registry entry.
 const GRAMMAR_ONLY: readonly GrammarOnlyKeyword[] = [
-    { token: 'AT', reason: 'A region marker that only exists as the AT> or AT( pointer, never as a standalone keyword.' },
-    { token: 'FLAGS', reason: 'A PHDRS attribute; the registry documents program-header types, not the attribute list.' },
-    { token: 'FILEHDR', reason: 'A PHDRS-only modifier, so it only appears inside a PHDRS body and is not completed.' }
+    { token: 'AT', reason: 'A region marker that only exists as the AT> or AT( pointer, never as a standalone keyword.' }
 ];
 
 function keywordPositions(list: KeywordList, token: string): number {

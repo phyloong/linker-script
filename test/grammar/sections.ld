@@ -45,6 +45,28 @@ SECTIONS
 //                  ^ punctuation.section.parens.begin.ld
 //                   ^^^^^^^^ entity.name.section.input.ld
 //                           ^ punctuation.section.parens.end.ld
+        SORT_NONE(.ctors.*)
+//      ^^^^^^^^^ keyword.control.command.ld
+//               ^ punctuation.section.parens.begin.ld
+//                ^^^^^^^^ entity.name.section.input.ld
+//                        ^ punctuation.section.parens.end.ld
+        *(EXCLUDE_FILE(.init) .text*)
+//      ^ keyword.operator.wildcard.ld
+//       ^ punctuation.section.parens.begin.ld
+//        ^^^^^^^^^^^^ keyword.control.command.ld
+//                    ^ punctuation.section.parens.begin.ld
+//                     ^^^^^ entity.name.section.input.ld
+//                          ^ punctuation.section.parens.end.ld
+//                            ^^^^^^ entity.name.section.input.ld
+//                                  ^ punctuation.section.parens.end.ld
+        _max = CONSTANT(MAXPAGESIZE);
+//      ^^^^ variable.other.symbol.ld
+//           ^ keyword.operator.assignment.ld
+//             ^^^^^^^^ support.function.ld
+//                     ^ punctuation.section.parens.begin.ld
+//                      ^^^^^^^^^^^ - support.function.ld
+//                                 ^ punctuation.section.parens.end.ld
+//                                  ^ punctuation.terminator.statement.ld
         BYTE(0x7f)
 //      ^^^^ keyword.control.command.ld
 //          ^ punctuation.section.parens.begin.ld
@@ -89,6 +111,16 @@ SECTIONS
 //                  ^^^^^^^^ entity.name.section.input.ld
 //                          ^ punctuation.section.parens.end.ld
 //                            ^ punctuation.section.block.end.ld
+    __data_start = DATA_SEGMENT_ALIGN(0x1000, 0x1000);
+//  ^^^^^^^^^^^^ variable.other.symbol.ld
+//               ^ keyword.operator.assignment.ld
+//                 ^^^^^^^^^^^^^^^^^^ support.function.ld
+//                                   ^ punctuation.section.parens.begin.ld
+//                                    ^^^^^^ constant.numeric.ld
+//                                          ^ punctuation.separator.comma.ld
+//                                            ^^^^^^ constant.numeric.ld
+//                                                  ^ punctuation.section.parens.end.ld
+//                                                   ^ punctuation.terminator.statement.ld
     PROVIDE(_etext = .);
 //  ^^^^^^^ keyword.control.command.ld
 //         ^ punctuation.section.parens.begin.ld

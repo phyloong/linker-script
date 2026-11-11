@@ -46,11 +46,14 @@ const PREVIOUS_IDS = [
     'DEFINED', 'LOADADDR', 'MAX', 'MIN', 'NEXT', 'SIZEOF'
 ];
 
-// The nine entries the change adds, plus ORIGIN/LENGTH, which the MEMORY
-// scenario in the spec requires and the old table never had.
+// The entries the change adds, plus ORIGIN/LENGTH, which the MEMORY scenario in
+// the spec requires and the old table never had.
 const ADDED_IDS = [
     'PROVIDE_HIDDEN', 'INSERT', 'REGION_ALIAS', 'LD_FEATURE', 'SORT_BY_NAME',
-    'SORT_BY_ALIGNMENT', 'SORT_BY_INIT_PRIORITY', 'SQUAD', 'KEEP'
+    'SORT_BY_ALIGNMENT', 'SORT_BY_INIT_PRIORITY', 'SQUAD', 'KEEP',
+    'PT_TLS', 'PT_GNU_STACK', 'PT_GNU_RELRO', 'PT_GNU_EH_FRAME',
+    'FILEHDR', 'FLAGS', 'EXCLUDE_FILE', 'SORT_NONE',
+    'DATA_SEGMENT_ALIGN', 'DATA_SEGMENT_RELRO_END', 'CONSTANT', 'SEGMENT_START'
 ];
 const REGION_FIELD_IDS = ['ORIGIN', 'LENGTH'];
 
@@ -76,7 +79,7 @@ suite('Keyword registry', function () {
             assert.strictEqual(ids.filter((candidate) => candidate === id).length, 1, id + ' resolves to exactly one entry');
         }
         assert.strictEqual(ids.length, 51 + ADDED_IDS.length + REGION_FIELD_IDS.length + REGION_ATTRIBUTE_IDS.length + VERSION_IDS.length);
-        assert.strictEqual(KEYWORDS.length, 72);
+        assert.strictEqual(KEYWORDS.length, 84);
     });
 
     test('has no duplicate ids', function () {
@@ -168,13 +171,12 @@ suite('Keyword registry', function () {
         assert.strictEqual(top.indexOf('BYTE'), -1, 'data commands are not offered at top level');
     });
 
-    test('an output section body offers data commands and no PROVIDE or ASSERT', function () {
+    test('an output section body offers data commands and the symbol commands', function () {
         const body = labels('section-body');
-        for (const id of ['BYTE', 'SHORT', 'LONG', 'QUAD', 'SQUAD', 'FILL', 'ALIGN']) {
+        for (const id of ['BYTE', 'SHORT', 'LONG', 'QUAD', 'SQUAD', 'FILL', 'ALIGN',
+            'PROVIDE', 'PROVIDE_HIDDEN', 'ASSERT']) {
             assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
         }
-        assert.strictEqual(body.indexOf('PROVIDE'), -1);
-        assert.strictEqual(body.indexOf('ASSERT'), -1);
     });
 
     test('the output section level offers section syntax but no data commands', function () {

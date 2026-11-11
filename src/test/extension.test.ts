@@ -208,15 +208,17 @@ suite('Extension Tests', function () {
         assert.ok(!labels.includes('BYTE'), 'data commands are not offered at the top level');
     });
 
-    test('drops block keywords and section-level commands inside a section body', async function () {
+    test('drops block keywords inside a section body and keeps the commands', async function () {
         const document = await openWithContent('SECTIONS {\n    .text : {\n        \n    }\n}\n');
         const labels = await labelsAt(document, 2, 8);
         assert.ok(labels.includes('BYTE'), 'data commands are offered in a section body');
         assert.ok(labels.includes('KEEP'), 'input section descriptions are offered in a section body');
         assert.ok(!labels.includes('SECTIONS'), 'SECTIONS is absent inside a section body');
         assert.ok(!labels.includes('MEMORY'), 'MEMORY is absent inside a section body');
-        assert.ok(!labels.includes('PROVIDE'), 'PROVIDE is absent inside a section body');
-        assert.ok(!labels.includes('ASSERT'), 'ASSERT is absent inside a section body');
+        assert.ok(labels.includes('PROVIDE'), 'PROVIDE is offered inside a section body');
+        assert.ok(labels.includes('PROVIDE_HIDDEN'), 'PROVIDE_HIDDEN is offered inside a section body');
+        assert.ok(labels.includes('ASSERT'), 'ASSERT is offered inside a section body');
+        assert.ok(!labels.includes('DATA_SEGMENT_ALIGN'), 'DATA_SEGMENT_ALIGN is absent inside a section body');
     });
 
     test('keeps section-level items directly inside SECTIONS', async function () {
@@ -367,17 +369,17 @@ suite('Extension Tests', function () {
             'V1.0 is a user-defined version node name');
     });
 
-    test('shows both placements of PROVIDE on hover', async function () {
+    test('shows every placement of PROVIDE on hover', async function () {
         const document = await openWithContent(
             'SECTIONS {\n    .text : { *(.text) }\n    PROVIDE(_etext = .);\n}\n');
         const hovers = await hoverAt(document, 'PROVIDE', 1);
         const text = hoverText(hovers);
         assert.ok(text.indexOf('PROVIDE(symbol = expression)') !== -1, 'the signature is shown: ' + text);
-        // The summary names both placements, so asserting it whole covers them.
+        // The summary names every placement, so asserting it whole covers them.
         assertMarkdownTooltip(hovers[0], 'PROVIDE(symbol = expression)', 'PROVIDE');
     });
 
-    test('shows both placements of ASSERT on hover', async function () {
+    test('shows every placement of ASSERT on hover', async function () {
         const document = await openWithContent(
             'SECTIONS {\n    .text : { *(.text) }\n    ASSERT(SIZEOF(.text) > 0, "empty")\n}\n');
         const hovers = await hoverAt(document, 'ASSERT', 1);

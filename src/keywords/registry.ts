@@ -58,10 +58,10 @@ export const EXAMPLE_MAX_LINES = 4;
 // MEMORY or VERSION, where expressions are rare and the item set is narrow.
 const EXPRESSION_SCOPES: readonly KeywordScope[] = ['top', 'sections', 'section-body', 'overlay'];
 
-// Commands legal both at top level and directly inside SECTIONS or an overlay
-// section, but not in an output section body (see the spec scenario "Inside an
-// output section body").
-const TOP_AND_SECTIONS: readonly KeywordScope[] = ['top', 'sections', 'overlay'];
+// Commands legal at top level, directly inside SECTIONS, in an output section
+// body, and inside an overlay section: the symbol-definition and assertion
+// commands, which ld accepts as statements wherever sections are described.
+const TOP_AND_SECTION_COMMANDS: readonly KeywordScope[] = ['top', 'sections', 'section-body', 'overlay'];
 
 export const KEYWORDS: readonly KeywordEntry[] = [
     // ---------------------------------------------------------------- top level
@@ -141,9 +141,9 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'ASSERT',
         kind: 'command',
         snippet: 'ASSERT(${1:expression}, ${2:message})',
-        summary: 'Stop the link with a message when an expression evaluates to zero, at top level, in SECTIONS, or in an overlay.',
+        summary: 'Stop the link with a message when an expression evaluates to zero, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: 'ASSERT(SIZEOF(.text) > 0, "text is empty")\nSECTIONS { .data : { *(.data) } ASSERT(SIZEOF(.data) > 0, "no .data") }',
-        scopes: TOP_AND_SECTIONS
+        scopes: TOP_AND_SECTION_COMMANDS
     },
     {
         id: 'EXTERN',
@@ -165,17 +165,17 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'PROVIDE',
         kind: 'command',
         snippet: 'PROVIDE(${1:symbol} = ${2:expression})',
-        summary: 'Create a symbol only when something needs it and nothing else defines it, at top level, in SECTIONS, or in an overlay.',
+        summary: 'Create a symbol only when something needs it and nothing else defines it, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: 'PROVIDE(__stack_top = 0x20001000)\nSECTIONS { .text : { *(.text) } PROVIDE(_etext = .); }',
-        scopes: TOP_AND_SECTIONS
+        scopes: TOP_AND_SECTION_COMMANDS
     },
     {
         id: 'PROVIDE_HIDDEN',
         kind: 'command',
         snippet: 'PROVIDE_HIDDEN(${1:symbol} = ${2:expression})',
-        summary: 'Define a symbol the way PROVIDE does but keep it out of the dynamic symbol table, at top level, in SECTIONS, or in an overlay.',
+        summary: 'Define a symbol the way PROVIDE does but keep it out of the dynamic symbol table, at top level, in SECTIONS, in an output section, or in an overlay.',
         example: 'PROVIDE_HIDDEN(_end = .);',
-        scopes: TOP_AND_SECTIONS
+        scopes: TOP_AND_SECTION_COMMANDS
     },
     {
         id: 'INSERT',
@@ -299,6 +299,22 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         snippet: 'SORT_BY_INIT_PRIORITY(${1:.init_array.*})',
         summary: 'Order the matched input sections by the priority encoded in their constructor names.',
         example: '.init_array : { SORT_BY_INIT_PRIORITY(.init_array.*) }',
+        scopes: ['section-body']
+    },
+    {
+        id: 'SORT_NONE',
+        kind: 'command',
+        snippet: 'SORT_NONE(${1:.text*})',
+        summary: 'Keep the matched input sections in their original order instead of sorting them.',
+        example: '.text : { SORT_NONE(.text.*) }',
+        scopes: ['section-body']
+    },
+    {
+        id: 'EXCLUDE_FILE',
+        kind: 'command',
+        snippet: 'EXCLUDE_FILE(${1:file.o})',
+        summary: 'Leave the listed object files out when the surrounding wildcard selects input sections.',
+        example: '*(EXCLUDE_FILE(foo.o) .text*)\n*(SORT_BY_NAME(EXCLUDE_FILE(crtend.o) .ctors))',
         scopes: ['section-body']
     },
     {
@@ -549,8 +565,91 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         example: 'PHDRS { headers PT_PHDR; }',
         scopes: ['phdrs']
     },
+    {
+        id: 'PT_TLS',
+        kind: 'field',
+        snippet: 'PT_TLS',
+        summary: 'Program header type for a segment that holds thread-local storage.',
+        example: 'PHDRS { tls PT_TLS; }',
+        scopes: ['phdrs']
+    },
+    {
+        id: 'PT_GNU_STACK',
+        kind: 'field',
+        snippet: 'PT_GNU_STACK',
+        summary: 'Program header type for the stack segment, whose flags record whether the stack is executable.',
+        example: 'PHDRS { stack PT_GNU_STACK; }',
+        scopes: ['phdrs']
+    },
+    {
+        id: 'PT_GNU_RELRO',
+        kind: 'field',
+        snippet: 'PT_GNU_RELRO',
+        summary: 'Program header type for a segment the loader makes read-only after relocating it.',
+        example: 'PHDRS { relro PT_GNU_RELRO; }',
+        scopes: ['phdrs']
+    },
+    {
+        id: 'PT_GNU_EH_FRAME',
+        kind: 'field',
+        snippet: 'PT_GNU_EH_FRAME',
+        summary: 'Program header type for the segment holding the exception-handling frame tables.',
+        example: 'PHDRS { eh_frame PT_GNU_EH_FRAME; }',
+        scopes: ['phdrs']
+    },
+    // Modifiers that may follow the type in the same program header entry.
+    {
+        id: 'FILEHDR',
+        kind: 'keyword',
+        snippet: 'FILEHDR',
+        summary: 'Include the ELF file header in the segment this program header entry describes.',
+        example: 'PHDRS { text PT_LOAD FILEHDR FLAGS(5); }',
+        scopes: ['phdrs']
+    },
+    {
+        id: 'FLAGS',
+        kind: 'command',
+        snippet: 'FLAGS(${1:flags})',
+        summary: 'Set the permission flags of a program header entry, inside PHDRS.',
+        example: 'PHDRS { text PT_LOAD FLAGS(5); }',
+        scopes: ['phdrs']
+    },
 
     // ----------------------------------------------------- expression functions
+    // ld accepts the two DATA_SEGMENT_* functions only directly inside
+    // SECTIONS, so their scopes list is narrower than the other functions'.
+    {
+        id: 'DATA_SEGMENT_ALIGN',
+        kind: 'function',
+        snippet: 'DATA_SEGMENT_ALIGN(${1:maxpagesize}, ${2:commonpagesize})',
+        summary: 'Start the data segment at an aligned address, directly inside SECTIONS.',
+        example: '__data_start = DATA_SEGMENT_ALIGN(0x1000, 0x1000);',
+        scopes: ['sections']
+    },
+    {
+        id: 'DATA_SEGMENT_RELRO_END',
+        kind: 'function',
+        snippet: 'DATA_SEGMENT_RELRO_END(${1:offset}, ${2:expression})',
+        summary: 'Close the read-only-after-relocation data segment opened by DATA_SEGMENT_ALIGN, directly inside SECTIONS.',
+        example: '__relro_end = DATA_SEGMENT_RELRO_END(0, __data_start);',
+        scopes: ['sections']
+    },
+    {
+        id: 'CONSTANT',
+        kind: 'function',
+        snippet: 'CONSTANT(${1:name})',
+        summary: 'Return the value of a built-in constant such as MAXPAGESIZE, at top level, in SECTIONS, in an output section, or in an overlay.',
+        example: '_max = CONSTANT(MAXPAGESIZE);',
+        scopes: EXPRESSION_SCOPES
+    },
+    {
+        id: 'SEGMENT_START',
+        kind: 'function',
+        snippet: 'SEGMENT_START(${1:segment}, ${2:default})',
+        summary: 'Return the base address of a named segment, or a default when it has none, at top level, in SECTIONS, in an output section, or in an overlay.',
+        example: '_text = SEGMENT_START("text-segment", 0x10000);',
+        scopes: EXPRESSION_SCOPES
+    },
     {
         id: 'ABSOLUTE',
         kind: 'function',
