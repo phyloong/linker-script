@@ -5,7 +5,7 @@
 See `proposal.md` for the motivation. Two constraints shape every decision here:
 
 - `src/keywords/registry.ts` is the only copy of keyword data, and `src/test/unit/grammar-sync.test.ts` enforces set alignment in both directions. A registry entry without a colouring pattern fails the suite, and a spelling listed in a grammar alternation without a registry entry (or a declared exception) fails it too. `GRAMMAR_ONLY` and `GENERIC_COVERAGE` are the two escape hatches, and a spelling may not sit in both a table and the registry.
-- `src/test/unit/keywords.test.ts` pins the entry count at 72, forbids newline characters inside a snippet placeholder, requires each summary to be a single sentence under 160 characters, and requires every multi-scope summary to name every placement using the fixed phrases `top level`, `SECTIONS`, `output section`, `MEMORY`, `PHDRS`, `VERSION`, `overlay`.
+- `src/test/unit/keywords.test.ts` pinned the entry count at 72 before this change, forbids newline characters inside a snippet placeholder, requires each summary to be a single sentence under 160 characters, and requires every multi-scope summary to name every placement using the fixed phrases `top level`, `SECTIONS`, `output section`, `MEMORY`, `PHDRS`, `VERSION`, `overlay`.
 
 ## Goals / Non-Goals
 
@@ -19,7 +19,7 @@ See `proposal.md` for the motivation. Two constraints shape every decision here:
 - No new scope name: every entry fits `top`, `sections`, `section-body`, `memory`, `phdrs`, `version` or `overlay`.
 - No `signature` override. Every snippet in this change derives an acceptable signature.
 - No `MAXPAGESIZE` or `COMMONPAGESIZE` entry: they are operands, not statements, and `CONSTANT` documentation is enough to make them discoverable.
-- No version bump or CHANGELOG entry; those belong to a release change.
+- No version bump. The CHANGELOG gains an `Unreleased` entry that also records the version-node colouring fix shipped by the companion change, so both land in the same release note.
 
 ## Decisions
 
@@ -63,7 +63,7 @@ The `PHDRS` flag inside a program header entry shares its spelling with the bloc
 
 ### Fixtures grow in place
 
-New assertion lines go into `test/grammar/sections.ld` (`EXCLUDE_FILE`, `SORT_NONE`) and `test/grammar/phdrs.ld` (one `PT_TLS` and one `PT_GNU_*` entry), not into new fixture files: the completeness check runs per line and existing files already own these constructs.
+New assertion lines go into `test/grammar/sections.ld` (`EXCLUDE_FILE`, `SORT_NONE`) and `test/grammar/phdrs.ld` (a `PT_TLS` entry and the three `PT_GNU_*` types), not into new fixture files: the completeness check runs per line and existing files already own these constructs.
 
 `SORT_NONE` must precede `SORT` in the grammar alternation, because `SORT` is a prefix of it and the ordering check rejects the reverse.
 

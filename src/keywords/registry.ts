@@ -305,7 +305,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SORT_NONE',
         kind: 'command',
         snippet: 'SORT_NONE(${1:.text*})',
-        summary: 'Ignore the command-line section sort so the matched input sections keep their link order.',
+        summary: 'Turn off sorting for the selected input sections, overriding the command-line sort option.',
         example: '.text : { SORT_NONE(.text.*) }',
         scopes: ['section-body']
     },
@@ -314,7 +314,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         kind: 'command',
         snippet: 'EXCLUDE_FILE(${1:file.o})',
         summary: 'Leave the listed object files out when the surrounding wildcard selects input sections.',
-        example: '*(EXCLUDE_FILE(foo.o) .text*)\n*(SORT_BY_NAME(EXCLUDE_FILE(crtend.o) .ctors))',
+        example: '.text : { *(EXCLUDE_FILE(startup.o) .text*) }\n.init : { *(SORT_BY_NAME(EXCLUDE_FILE(last.o) .init*)) }',
         scopes: ['section-body']
     },
     {

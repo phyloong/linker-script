@@ -13,7 +13,7 @@ The registry in `src/keywords/registry.ts` lags behind what GNU ld accepts. Four
 - Add `DATA_SEGMENT_ALIGN` and `DATA_SEGMENT_RELRO_END` scoped to `SECTIONS` only, and `CONSTANT` and `SEGMENT_START` in every expression scope, with matching grammar additions.
 - Raise the registry from 72 to 84 entries and update every place that states the number: the unit expectation, the README feature list and limitation list, and the section-body completion assertions in both test suites.
 
-Not in scope: the version-node inheritance colouring bug (separate change), `MAXPAGESIZE`/`COMMONPAGESIZE` as their own entries, and any new scope name.
+Not in scope: the version-node inheritance colouring bug, which ships as a separate change and shares the same `Unreleased` CHANGELOG section; `MAXPAGESIZE`/`COMMONPAGESIZE` as their own entries; and any new scope name.
 
 ## Capabilities
 

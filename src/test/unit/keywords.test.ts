@@ -200,18 +200,13 @@ suite('Keyword registry', function () {
         assert.strictEqual(entry('FLAGS').snippet, 'FLAGS(${1:flags})');
     });
 
+    // The scope list is asserted whole: sharing EXPRESSION_SCOPES makes a
+    // missing or extra placement invisible to a presence check.
     test('builtin functions are offered only where ld accepts them', function () {
-        const top = labels('top');
-        const sections = labels('sections');
-        const body = labels('section-body');
-        for (const id of ['DATA_SEGMENT_ALIGN', 'DATA_SEGMENT_RELRO_END']) {
-            assert.ok(sections.indexOf(id) !== -1, id + ' is offered directly inside SECTIONS');
-            assert.strictEqual(body.indexOf(id), -1, id + ' is not offered in a section body');
-        }
-        for (const id of ['CONSTANT', 'SEGMENT_START']) {
-            assert.ok(top.indexOf(id) !== -1, id + ' is offered at top level');
-            assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
-        }
+        assert.deepStrictEqual(entry('DATA_SEGMENT_ALIGN').scopes, ['sections']);
+        assert.deepStrictEqual(entry('DATA_SEGMENT_RELRO_END').scopes, ['sections']);
+        assert.deepStrictEqual(entry('CONSTANT').scopes, ['top', 'sections', 'section-body', 'overlay']);
+        assert.deepStrictEqual(entry('SEGMENT_START').scopes, ['top', 'sections', 'section-body', 'overlay']);
         assert.strictEqual(entry('DATA_SEGMENT_ALIGN').snippet, 'DATA_SEGMENT_ALIGN(${1:maxpagesize}, ${2:commonpagesize})');
     });
 

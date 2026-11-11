@@ -43,7 +43,7 @@ Inside an output section body the extension SHALL offer `EXCLUDE_FILE` and `SORT
 
 #### Scenario: File exclusion filter
 
-- **WHEN** the cursor is inside an input section description and the user requests completion
+- **WHEN** the cursor is inside an output section body and the user requests completion
 - **THEN** `EXCLUDE_FILE` is offered and inserts a call whose file name is the first tab stop
 
 #### Scenario: Sorting override

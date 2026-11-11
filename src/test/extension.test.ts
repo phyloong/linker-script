@@ -399,6 +399,13 @@ suite('Extension Tests', function () {
         assertMarkdownTooltip(hovers[0], 'ASSERT(expression, message)', 'ASSERT');
     });
 
+    test('shows the SEGMENT_START signature on hover', async function () {
+        const document = await openWithContent('SECTIONS { . = SEGMENT_START("text", 0x1000); }\n');
+        const hovers = await hoverAt(document, 'SEGMENT_START', 0);
+        const text = hoverText(hovers);
+        assert.ok(text.indexOf('SEGMENT_START(segment, default)') !== -1, 'the signature is shown: ' + text);
+    });
+
     // Hover is scope-agnostic on purpose: a registered word is answered
     // wherever it appears, comments and strings included.
     test('answers hover inside a comment and a string literal', async function () {
