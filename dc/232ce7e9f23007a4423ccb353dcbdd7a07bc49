@@ -1,0 +1,28 @@
+AGENTS.md
+  h_ee8a6db81c66e8 43
+openspec/changes/archive/2026-11-11-add-keyword-drift-guard/.openspec.yaml
+  h_ee8a6db81c66e8 1-2
+openspec/changes/archive/2026-11-11-add-keyword-drift-guard/design.md
+  h_ee8a6db81c66e8 1-110
+openspec/changes/archive/2026-11-11-add-keyword-drift-guard/proposal.md
+  h_ee8a6db81c66e8 1-53
+openspec/changes/archive/2026-11-11-add-keyword-drift-guard/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 1-41
+openspec/changes/archive/2026-11-11-add-keyword-drift-guard/tasks.md
+  h_ee8a6db81c66e8 1-57
+openspec/specs/syntax-highlighting/spec.md
+  h_ee8a6db81c66e8 111-147
+src/test/unit/grammar-sync.test.ts
+  h_ee8a6db81c66e8 1-466
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc232ce7e9f23007a4423ccb353dcbdd7a07bc49",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
