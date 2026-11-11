@@ -1,0 +1,16 @@
+syntaxes/linker-script.tmLanguage.json
+  h_ee8a6db81c66e8 611-615,622
+test/grammar/version.ld
+  h_ee8a6db81c66e8 59-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e9fd4f70be21b985108435df0dfbc2206b717e03",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
