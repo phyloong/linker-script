@@ -36,8 +36,8 @@ The constant is renamed `TOP_AND_SECTION_COMMANDS` so its name still describes i
 Its snippet is `EXCLUDE_FILE(${1:file.o})`, the same shape as every other command entry, and the derived signature reads `EXCLUDE_FILE(file.o)`. The rule that it must sit inside the wildcard parentheses, and that a sorting command may contain it but not the reverse, is carried by the example:
 
 ```
-*(EXCLUDE_FILE(foo.o) .text*)
-*(SORT_BY_NAME(EXCLUDE_FILE(crtend.o) .ctors))
+.text : { *(EXCLUDE_FILE(startup.o) .text*) }
+.init : { *(SORT_BY_NAME(EXCLUDE_FILE(last.o) .init*)) }
 ```
 
 Alternative rejected: wrapping the wildcard in the snippet (`*(EXCLUDE_FILE(file.o) .text*)`) produces legal text on accept, but the item label would no longer match the inserted text, and hover would need the first `signature` override in the registry to stop showing a form with a leading `*`. One undocumented mechanism is not worth one keyword.

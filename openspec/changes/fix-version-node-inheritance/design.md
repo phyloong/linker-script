@@ -8,7 +8,7 @@ See `proposal.md` for the motivation. The relevant grammar shape is `#version-no
 
 **Goals**
 
-- A node reference can never open a region, so region nesting follows the braces a script actually has.
+- A node reference that carries its terminator on the same line never opens a region, so region nesting follows the braces a script actually has. A reference split before its semicolon is out of reach: no pattern here can look past a line break.
 - The reference keeps its current visible colour, so the existing fixture assertions still describe the same scopes.
 
 **Non-Goals**

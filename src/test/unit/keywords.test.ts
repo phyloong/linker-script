@@ -208,6 +208,9 @@ suite('Keyword registry', function () {
         assert.deepStrictEqual(entry('CONSTANT').scopes, ['top', 'sections', 'section-body', 'overlay']);
         assert.deepStrictEqual(entry('SEGMENT_START').scopes, ['top', 'sections', 'section-body', 'overlay']);
         assert.strictEqual(entry('DATA_SEGMENT_ALIGN').snippet, 'DATA_SEGMENT_ALIGN(${1:maxpagesize}, ${2:commonpagesize})');
+        // The expression and section-command scope lists coincide today; assert
+        // it, so editing one constant cannot silently strand the other.
+        assert.deepStrictEqual(entry('SEGMENT_START').scopes, entry('ASSERT').scopes);
     });
 
     test('the output section level offers section syntax but no data commands', function () {

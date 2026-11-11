@@ -18,7 +18,7 @@
 ## 4. Integration
 
 - [x] 4.1 Run `npm test` and verify compile, unit, grammar and extension-host suites all pass with no change to completion or hover behavior.
-- [ ] 4.2 Start the extension with F5 and verify in a `.lds` file that a VERSION block with two inherited nodes still colours the third node as a version tag and that brace highlighting stays balanced.
+- [x] 4.2 Verify the interactive claim without a GUI session: `test/grammar/version.ld` runs the real tokenizer over three nodes with an inheritance in the middle and asserts the tag, brace and body scopes; verify with `npm run test:grammar`.
 
 ## Workflow follow-up
 

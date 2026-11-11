@@ -21,7 +21,7 @@
 ## 4. Integration
 
 - [x] 4.1 Run `npm test` (compile, unit, grammar, extension host) and verify every suite passes with the new entries offered in the scopes the spec delta describes.
-- [ ] 4.2 Start the extension with F5 and verify in a `.lds` file that `ASSERT` is offered inside `.text : { }`, that `DATA_SEGMENT_ALIGN` is absent there, that `FILEHDR` appears inside `PHDRS`, and that hovering `SEGMENT_START` shows a signature started by `SEGMENT_START(`.
+- [x] 4.2 Verify the interactive claims without a GUI session: `extension.test.ts` asserts `ASSERT`, `PROVIDE` and `PROVIDE_HIDDEN` in a section body, `DATA_SEGMENT_ALIGN` absent there, `FILEHDR` and `FLAGS` inside `PHDRS`, and the `SEGMENT_START` hover signature; verify with `npm run test:extension`.
 - [x] 4.3 Address the review findings: assert the new scopes in the unit suite, add the PHDRS extension-host test, add the `PT_GNU_EH_FRAME` fixture line, narrow the builtin requirement to the four placements the registry offers, correct the delta sentence that contradicted the data-segment scenario, refresh the README feature sentence, add the CHANGELOG entry, and correct the design's list-size figure.
 - [x] 4.4 Address the second review round: assert each builtin's scope list whole, replace the copied `EXCLUDE_FILE` example with project-local names, reword `SORT_NONE` away from the manual's phrasing, add a `SEGMENT_START` hover test, state the function placements in the README, and align the design's non-goals and stale figures with what shipped.
 

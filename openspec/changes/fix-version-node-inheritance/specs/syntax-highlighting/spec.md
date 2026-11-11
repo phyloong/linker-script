@@ -7,7 +7,8 @@
 The grammar SHALL distinguish version node names, visibility commands, extern
 language blocks, symbol patterns and wildcards inside a `VERSION` block. It SHALL
 keep closing braces balanced when an extern block is nested inside a version node,
-and SHALL never let an inheritance reference open a region of its own.
+and SHALL not let an inheritance reference whose terminator shares its line open a
+region of its own.
 
 #### Scenario: Extern language block
 

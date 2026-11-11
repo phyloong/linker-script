@@ -28,7 +28,7 @@ None. Every added keyword fits a family the `keyword-completion` requirement alr
 
 ## Impact
 
-- `src/keywords/registry.ts`: 12 new entries, 3 scope-list changes, 3 summary rewrites, 2 new scope-list constants.
+- `src/keywords/registry.ts`: 12 new entries, 3 scope-list changes, 3 summary rewrites, 1 renamed scope-list constant.
 - `syntaxes/linker-script.tmLanguage.json`: command alternation (`EXCLUDE_FILE`, `SORT_NONE`) and expression alternation (`CONSTANT`, `SEGMENT_START`, `DATA_SEGMENT_ALIGN`, `DATA_SEGMENT_RELRO_END`).
 - `src/test/unit/grammar-sync.test.ts`: 4 `GENERIC_COVERAGE` rows added, 2 `GRAMMAR_ONLY` rows removed.
 - `test/grammar/sections.ld`, `test/grammar/phdrs.ld`: new assertion lines.

@@ -305,7 +305,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SORT_NONE',
         kind: 'command',
         snippet: 'SORT_NONE(${1:.text*})',
-        summary: 'Turn off sorting for the selected input sections, overriding the command-line sort option.',
+        summary: 'Disable the sort that the command line would apply to the selected input sections.',
         example: '.text : { SORT_NONE(.text.*) }',
         scopes: ['section-body']
     },
