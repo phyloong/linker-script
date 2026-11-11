@@ -50,12 +50,12 @@ SECTIONS
 //               ^ punctuation.section.parens.begin.ld
 //                ^^^^^^^^ entity.name.section.input.ld
 //                        ^ punctuation.section.parens.end.ld
-        *(EXCLUDE_FILE(.init) .text*)
+        *(EXCLUDE_FILE(foo.o) .text*)
 //      ^ keyword.operator.wildcard.ld
 //       ^ punctuation.section.parens.begin.ld
 //        ^^^^^^^^^^^^ keyword.control.command.ld
 //                    ^ punctuation.section.parens.begin.ld
-//                     ^^^^^ entity.name.section.input.ld
+//                     ^^^^^ - entity.name.section.input.ld
 //                          ^ punctuation.section.parens.end.ld
 //                            ^^^^^^ entity.name.section.input.ld
 //                                  ^ punctuation.section.parens.end.ld

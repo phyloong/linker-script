@@ -305,7 +305,7 @@ export const KEYWORDS: readonly KeywordEntry[] = [
         id: 'SORT_NONE',
         kind: 'command',
         snippet: 'SORT_NONE(${1:.text*})',
-        summary: 'Keep the matched input sections in their original order instead of sorting them.',
+        summary: 'Ignore the command-line section sort so the matched input sections keep their link order.',
         example: '.text : { SORT_NONE(.text.*) }',
         scopes: ['section-body']
     },

@@ -58,6 +58,10 @@ PHDRS
 //  ^^^^^ entity.name.tag.phdr.ld
 //        ^^^^^^^^^^^^ support.type.program-header.ld
 //                    ^ punctuation.terminator.statement.ld
+    eh_frame PT_GNU_EH_FRAME;
+//  ^^^^^^^^ entity.name.tag.phdr.ld
+//           ^^^^^^^^^^^^^^^ support.type.program-header.ld
+//                          ^ punctuation.terminator.statement.ld
     load_at PT_LOAD AT(0x8000);
 //  ^^^^^^^ entity.name.tag.phdr.ld
 //          ^^^^^^^ support.type.program-header.ld

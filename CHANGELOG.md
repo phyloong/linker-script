@@ -1,5 +1,16 @@
 # Change Log
 
+## Unreleased
+
+### Added
+
+- Completion and hover for the `PT_TLS`, `PT_GNU_STACK`, `PT_GNU_RELRO` and `PT_GNU_EH_FRAME` program header types, the `FILEHDR` and `FLAGS` program header modifiers, the `EXCLUDE_FILE` and `SORT_NONE` input section filters, and the `DATA_SEGMENT_ALIGN`, `DATA_SEGMENT_RELRO_END`, `CONSTANT` and `SEGMENT_START` functions, bringing the registry to 84 keywords.
+- `ASSERT`, `PROVIDE` and `PROVIDE_HIDDEN` are now offered inside an output section body, where ld accepts them as statements.
+
+### Fixed
+
+- A version node inheritance reference no longer opens a region of its own, so a node declared after `V2.0 { } V1.0;` keeps its version tag scope.
+
 ## 0.2.1
 
 ### Added

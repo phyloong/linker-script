@@ -221,6 +221,17 @@ suite('Extension Tests', function () {
         assert.ok(!labels.includes('DATA_SEGMENT_ALIGN'), 'DATA_SEGMENT_ALIGN is absent inside a section body');
     });
 
+    test('offers the program header types and modifiers inside PHDRS', async function () {
+        const document = await openWithContent('PHDRS {\n    \n}\n');
+        const labels = await labelsAt(document, 1, 4);
+        assert.ok(labels.includes('PT_LOAD'), 'program header types are offered inside PHDRS');
+        assert.ok(labels.includes('PT_GNU_STACK'), 'the PT_GNU_* types are offered inside PHDRS');
+        assert.ok(labels.includes('FILEHDR'), 'FILEHDR is offered inside PHDRS');
+        assert.ok(labels.includes('FLAGS'), 'FLAGS is offered inside PHDRS');
+        assert.ok(!labels.includes('SECTIONS'), 'block keywords are absent inside PHDRS');
+        assert.ok(!labels.includes('BYTE'), 'data commands are absent inside PHDRS');
+    });
+
     test('keeps section-level items directly inside SECTIONS', async function () {
         const document = await openWithContent('SECTIONS {\n    \n}\n');
         const labels = await labelsAt(document, 1, 4);

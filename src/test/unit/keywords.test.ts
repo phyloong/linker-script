@@ -46,8 +46,8 @@ const PREVIOUS_IDS = [
     'DEFINED', 'LOADADDR', 'MAX', 'MIN', 'NEXT', 'SIZEOF'
 ];
 
-// The entries the change adds, plus ORIGIN/LENGTH, which the MEMORY scenario in
-// the spec requires and the old table never had.
+// Entries added since the pre-registry baseline, plus ORIGIN/LENGTH, which the
+// MEMORY scenario requires and the old table never had.
 const ADDED_IDS = [
     'PROVIDE_HIDDEN', 'INSERT', 'REGION_ALIAS', 'LD_FEATURE', 'SORT_BY_NAME',
     'SORT_BY_ALIGNMENT', 'SORT_BY_INIT_PRIORITY', 'SQUAD', 'KEEP',
@@ -177,6 +177,42 @@ suite('Keyword registry', function () {
             'PROVIDE', 'PROVIDE_HIDDEN', 'ASSERT']) {
             assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
         }
+    });
+
+    test('an output section body offers the input section filters', function () {
+        const body = labels('section-body');
+        for (const id of ['EXCLUDE_FILE', 'SORT_NONE']) {
+            assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
+        }
+        assert.strictEqual(entry('EXCLUDE_FILE').snippet, 'EXCLUDE_FILE(${1:file.o})');
+        assert.strictEqual(entry('SORT_NONE').snippet, 'SORT_NONE(${1:.text*})');
+    });
+
+    test('PHDRS offers the header types and the two modifiers', function () {
+        const phdrs = labels('phdrs');
+        for (const id of ['PT_LOAD', 'PT_TLS', 'PT_GNU_STACK', 'PT_GNU_RELRO', 'PT_GNU_EH_FRAME',
+            'FILEHDR', 'FLAGS']) {
+            assert.ok(phdrs.indexOf(id) !== -1, id + ' is offered inside PHDRS');
+        }
+        for (const id of ['SECTIONS', 'MEMORY', 'BYTE', 'KEEP']) {
+            assert.strictEqual(phdrs.indexOf(id), -1, id + ' is not offered inside PHDRS');
+        }
+        assert.strictEqual(entry('FLAGS').snippet, 'FLAGS(${1:flags})');
+    });
+
+    test('builtin functions are offered only where ld accepts them', function () {
+        const top = labels('top');
+        const sections = labels('sections');
+        const body = labels('section-body');
+        for (const id of ['DATA_SEGMENT_ALIGN', 'DATA_SEGMENT_RELRO_END']) {
+            assert.ok(sections.indexOf(id) !== -1, id + ' is offered directly inside SECTIONS');
+            assert.strictEqual(body.indexOf(id), -1, id + ' is not offered in a section body');
+        }
+        for (const id of ['CONSTANT', 'SEGMENT_START']) {
+            assert.ok(top.indexOf(id) !== -1, id + ' is offered at top level');
+            assert.ok(body.indexOf(id) !== -1, id + ' is offered in a section body');
+        }
+        assert.strictEqual(entry('DATA_SEGMENT_ALIGN').snippet, 'DATA_SEGMENT_ALIGN(${1:maxpagesize}, ${2:commonpagesize})');
     });
 
     test('the output section level offers section syntax but no data commands', function () {
