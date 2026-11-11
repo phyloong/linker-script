@@ -56,5 +56,16 @@ VERSION
 //         ^ punctuation.section.block.end.ld
 //           ^^^^ entity.name.tag.version.ld
 //               ^ punctuation.terminator.statement.ld
+    V4.0 {
+//  ^^^^ entity.name.tag.version.ld
+//       ^ punctuation.section.block.begin.ld
+        local: *;
+//      ^^^^^ keyword.other.version.ld
+//           ^ punctuation.separator.colon.ld
+//             ^ keyword.operator.wildcard.ld
+//              ^ punctuation.terminator.statement.ld
+    };
+//  ^ punctuation.section.block.end.ld
+//   ^ punctuation.terminator.statement.ld
 }
 //<- punctuation.section.block.end.ld

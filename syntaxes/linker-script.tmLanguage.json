@@ -609,12 +609,17 @@
                     "include": "#version-node"
                 },
                 {
+                    "comment": "A bare identifier at version-body level is an inheritance reference, never a node: a node always has a brace.",
+                    "match": "(?<![\\w.$])[A-Za-z_][\\w.$-]*(?=\\s*;)",
+                    "name": "entity.name.tag.version.ld"
+                },
+                {
                     "include": "#punctuation"
                 }
             ]
         },
         "version-node": {
-            "begin": "(?<![\\w.$])([A-Za-z_][\\w.$-]*)\\s*(\\{)?",
+            "begin": "(?<![\\w.$])([A-Za-z_][\\w.$-]*)\\s*(\\{)",
             "beginCaptures": {
                 "1": {
                     "name": "entity.name.tag.version.ld"
