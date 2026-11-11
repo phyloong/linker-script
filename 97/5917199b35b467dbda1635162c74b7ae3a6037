@@ -1,0 +1,28 @@
+README.md
+  h_ee8a6db81c66e8 7,91
+src/keywords/registry.ts
+  h_ee8a6db81c66e8 61-64,144,146,168,170,176,178,304-319,568-616,619-652
+src/test/extension.test.ts
+  h_ee8a6db81c66e8 211,218-221,372,378,382
+src/test/unit/grammar-sync.test.ts
+  h_ee8a6db81c66e8 286-290,315
+src/test/unit/keywords.test.ts
+  h_ee8a6db81c66e8 49-50,53-56,82,174,176-177
+syntaxes/linker-script.tmLanguage.json
+  h_ee8a6db81c66e8 392,402
+test/grammar/phdrs.ld
+  h_ee8a6db81c66e8 49-60
+test/grammar/sections.ld
+  h_ee8a6db81c66e8 48-69,114-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "975917199b35b467dbda1635162c74b7ae3a6037",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
