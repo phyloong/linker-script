@@ -1,0 +1,28 @@
+README.md
+  h_ee8a6db81c66e8 7
+openspec/changes/expand-keyword-coverage/design.md
+  h_ee8a6db81c66e8 8,22,66
+openspec/changes/expand-keyword-coverage/proposal.md
+  h_ee8a6db81c66e8 16
+openspec/changes/expand-keyword-coverage/specs/keyword-completion/spec.md
+  h_ee8a6db81c66e8 46
+openspec/changes/expand-keyword-coverage/tasks.md
+  h_ee8a6db81c66e8 26
+src/keywords/registry.ts
+  h_ee8a6db81c66e8 308,317
+src/test/extension.test.ts
+  h_ee8a6db81c66e8 402-408
+src/test/unit/keywords.test.ts
+  h_ee8a6db81c66e8 203-204,206-209
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "42bbb9b6a55d5d775b851694242b5475aa922967",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
