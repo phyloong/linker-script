@@ -1,0 +1,26 @@
+.agents/skills/.openspec-target
+  h_ee8a6db81c66e8 1-2,4
+.agents/skills/openspec-apply-change/SKILL.md
+  h_ee8a6db81c66e8 10,23-24,28,39,160
+.agents/skills/openspec-archive-change/SKILL.md
+  h_ee8a6db81c66e8 10,23-24,44
+.agents/skills/openspec-explore/SKILL.md
+  h_ee8a6db81c66e8 10,15,27-28,163,271,321,338,348
+.agents/skills/openspec-propose/SKILL.md
+  h_ee8a6db81c66e8 10,37-38,156
+.agents/skills/openspec-sync-specs/SKILL.md
+  h_ee8a6db81c66e8 10,25-26,45
+.agents/skills/openspec-update-change/SKILL.md
+  h_ee8a6db81c66e8 10,23-24,48,92-93,101,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1e2fe190d067c17af1038645efeb9d820203e4c",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
