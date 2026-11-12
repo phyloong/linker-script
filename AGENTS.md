@@ -4,7 +4,7 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 
 ## Project
 
-`linker-script` is a VS Code extension (publisher `amapleaf`, v0.2.1) that adds completion/snippets and hover documentation for GNU linker script (`.lds` and `.ld`) keywords, contributes the `linker-script` language with a TextMate grammar, and no longer touches `plaintext` documents. It is a single-purpose, very small codebase: eight source files plus a small test tree.
+`linker-script` is a VS Code extension (publisher `amapleaf`, v0.3.0) that adds completion/snippets and hover documentation for GNU linker script (`.lds` and `.ld`) keywords, contributes the `linker-script` language with a TextMate grammar, and no longer touches `plaintext` documents. It is a single-purpose, very small codebase: eight source files plus a small test tree.
 
 ## Commands
 
