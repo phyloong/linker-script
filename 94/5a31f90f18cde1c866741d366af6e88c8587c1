@@ -1,0 +1,14 @@
+AGENTS.md
+  h_ee8a6db81c66e8 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "945a31f90f18cde1c866741d366af6e88c8587c1",
+  "prompts": {},
+  "humans": {
+    "h_ee8a6db81c66e8": {
+      "author": "phyloong <phyloong@outlook.com>"
+    }
+  }
+}
